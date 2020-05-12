@@ -13,7 +13,16 @@ function addDays(date, days) {
     r.setTime(r.getTime() + days * 60 * 60 * 24 * 1000);
     return r;
 }
-
+function throttle_some(func, timeFrame) {
+    var lastTime = 0;
+    return function () {
+        var now = new Date();
+        if (now - lastTime >= timeFrame) {
+            lastTime = now;
+            func.apply(this, arguments);
+        }
+    };
+}
 function formatBytes(bytes, decimals) {
     if (bytes === 0) return '0 Octet';
 
@@ -53,17 +62,18 @@ new Vue({
         },
         send_file() {
             var xhr = new XMLHttpRequest();
-            xhr.upload.onprogress = (pe) => {
-                this.loaded = pe.loaded;
-                this.total = pe.total;
-            };
-            xhr.onload = () => {
+            var that = this;
+            xhr.upload.onprogress = throttle_some(function (pe) {
+                that.loaded = pe.loaded;
+                that.total = pe.total;
+            }, 500);
+            xhr.onload = function () {
                 console.log("success"); 
-                this.xhr = undefined;
+                that.xhr = undefined;
                 console.log(xhr.responseText);
                 var resp = JSON.parse(xhr.responseText);
                 if (resp) {
-                    this.get_url = resp.get_url;
+                    that.get_url = resp.get_url;
                 }
             };
             var params = {
