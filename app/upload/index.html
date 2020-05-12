@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FileX</title>
+  <link href="../filex.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<script> window.prolongation_ENT_args = { current: "CFilex", layout_url: "/EsupUserApps/layout" }; </script>
+<script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
+      
+<div id="main" v-cloak>
+  <div v-if="get_url">
+    <div>
+    <p>Le fichier <b>{{file_name}}</b> a été déposé.</p>
+
+    <p>Pour qu'un utilisateur télécharge votre fichier, envoyez lui cette adresse :</p>
+    <p><a :href="get_url">{{get_url}}</a></p>
+    
+    <p>Votre fichier sera automatiquement supprimé du serveur dans <b>{{daykeep}}</b> jours.</p>
+    </div>
+    <div style="margin-top: 2rem">
+     <i>Informations</i> :
+     <ul>
+      <li> Taille : {{file_size}}</li>
+      <li> Disponible jusqu'au : {{expiration}}</li>
+      </ul>
+    </div>
+
+    <div style="margin-top: 2rem">
+        <button @click="get_url = undefined">Déposer un autre fichier</button>
+    </div>
+  </div>
+  <div v-else>
+    <form @submit.prevent="send_file(file)">
+
+        <p>Cette application permet d'envoyer de gros fichiers (jusqu'à 2 Go).</p>
+
+        <p><strong>Veuillez sélectionner le document à déposer ("Parcourir...")</strong></p>
+
+        <p>Expiration du fichier : <select v-model="daykeep">
+            <option v-for="nb in daykeep_opts" :value="nb">
+                {{nb}}
+              </option>
+        </select> Jours</p>
+        <!--
+        <p><label><input type="checkbox" v-model="download_ack">Recevoir un avis de réception à chaque téléchargement</label></p>
+        <p><label><input type="checkbox" v-model="summary">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
+        -->
+        <p><label><input type="checkbox" v-model="with_password">Utiliser un mot de passe pour le téléchargement</label>
+            <span v-if="with_password">:
+              <input type="password" v-model="password" size="15" maxlength="30"><br>
+              <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
+            </span>
+        </p>
+
+        <input type="file" @change="file_selected">
+        <input type="submit" value="Envoyer" style="display: none">
+    </form>
+    <div v-if="xhr">
+        <progress :value="loaded" :max="total" v-if="total"></progress>
+        <button @click="abort">Annuler</button>
+    </div>
+
+    <p></p>
+    <b><font color="red">Conditions d'utilisation du service</font></b>
+    <ul>
+        <li>En mettant à disposition des fichiers, son propriétaire devient responsable de leur diffusion.</li>
+        <li>L'utilisateur s'engage à utiliser ce service à des fins strictement professionnelles : enseignement, recherche.</li>
+        <li>En utilisant ce service, l'utilisateur déclare avoir lu et accepté ces conditions. </li>
+    </ul>
+  </div>
+</div>
+
+<script src="../node_modules/vue/dist/vue.js"></script>
+<script src="upload.js"></script>
+
+</body>
+</html>

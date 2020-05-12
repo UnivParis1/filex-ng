@@ -1,0 +1,37 @@
+[v-cloak] {
+    display: none;
+}
+
+body {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    text-align: left;
+}
+.error {
+    font-weight: bold;
+    color: red;
+    font-size: 120%;
+}
+.notes {
+	font-size: smaller ;
+	color: red;
+	font-style: italic;
+}
+#main {
+    margin: 5pt;
+}
+
+ul {
+    margin-top: 0.2rem;
+}
+
+
+.pE-theme-paris1-2016 #bandeau-anonyme { 
+    display: none;
+}
+
+#bandeau-anonyme-title {
+    text-align: center;
+    color: #727780;
+    font-size: 26px;
+    padding: 9px 0px 13px 0px !important;
+}
