@@ -1,7 +1,9 @@
 const fs = require('fs')
+const dns = require('dns')
 const util = require('util')
 
 exports.fs_stat = util.promisify(fs.stat)
+exports.dns_reverse = util.promisify(dns.reverse)
 
 exports.addDays = function (date, days) {
     var r = new Date(date);

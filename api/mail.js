@@ -27,7 +27,14 @@ const send = (params) => {
     })
 }
 
-exports.notify_uploader = (doc) => {
+const doc_info = (doc) => (
+`Nom : ${doc.filename}
+Taille : ${helpers.formatBytes(doc.size)}
+Déposé le : ${helpers.format_date(doc.uploadTimestamp)}
+Disponible jusqu'au : ${helpers.format_date(doc.expireAt)}`
+)
+
+exports.notify_on_upload = (doc) => {
     const subject = `Système de transfert de fichier : ${doc.filename}`
     const text = `Vous venez de déposer le fichier : ${doc.filename}
 
@@ -40,10 +47,7 @@ ${get_url(doc._id)}
 
 Information sur le fichier déposé :
 
-Nom : ${doc.filename}
-Taille : ${helpers.formatBytes(doc.size)}
-Déposé le : ${helpers.format_date(doc.uploadTimestamp)}
-Disponible jusqu'au : ${helpers.format_date(doc.expireAt)}
+${doc_info(doc)}
 
 Options :
 
@@ -52,5 +56,22 @@ Options :
 
 Merci d'avoir utilisé le service d'échange de fichier.
 `
-    return send({ to: doc.uploader.mail, subject, text })
+    send({ to: doc.uploader.mail, subject, text })
+}
+
+exports.notify_on_download = async (req, doc) => {
+    const client_ip = req.headers['x-forwarded-for']
+    const client_host = await helpers.dns_reverse(client_ip).catch(_ => "")
+    const subject = `Votre fichier ${doc.filename} a été téléchargé`
+    const text = `Le fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été téléchargé.
+
+Pour informations :
+
+Adresse de téléchargement : ${client_ip} ${client_host}
+
+${doc_info(doc)}
+
+Merci d'avoir utilisé le service d'échange de fichier.
+`
+    send({ to: doc.uploader.mail, subject, text })
 }

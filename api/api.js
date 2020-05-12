@@ -31,7 +31,7 @@ exports.handle_upload = (req, res) => {
                 ..._.pick(req.query, 'filename', 'type', 'download_ack', 'summary', 'password'),
             }
             await (await db.collection('uploads')).insertOne(doc)
-            mail.notify_uploader(doc)
+            mail.notify_on_upload(doc) // do not wait for it to return
             res.json({ ok: ok, get_url: get_url(file_id) })    
         }
     })
@@ -58,6 +58,9 @@ exports.handle_download = async (req, res) => {
     } else {
         const doc = await db.get(await db.collection('uploads'), file_id)
         if (doc.password ? doc.password === req.query.password : req.query.auto) {
+            if (doc.download_ack) {
+                mail.notify_on_download(req, doc) // do not wait for it to return
+            }
             _.each({
                 "Content-Type": doc.type,
                 'Content-Disposition': "attachment; filename=" + doc.filename,

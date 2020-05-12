@@ -34,6 +34,19 @@ function formatBytes(bytes, decimals) {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+function round_time_10(v) {
+    return "" + Math.min(Math.round(v / 10), 5) + "0";
+}
+
+function format_remaining_time(seconds) {
+    if (seconds < 60) return seconds + "s";
+
+    var minutes = seconds / 60;
+    seconds = seconds % 60;
+    if (minutes < 5) return Math.trunc(minutes) + "m" + round_time_10(seconds) + "s";
+    if (minutes > 60) return Math.trunc(minutes / 60) + "h" + round_time_10(minutes % 60) + "m";
+    return Math.round(minutes) + "m";
+}
 
 new Vue({
     data: {
@@ -42,7 +55,7 @@ new Vue({
         download_ack: false, summary: false, with_password: false,
         password: undefined,
         file: undefined,
-        xhr: undefined, loaded: 0, total: 0,
+        xhr: undefined, loaded: 0, total: 0, estimated_remaining_time: '',
 
         get_url: undefined, file_name: undefined, file_size: undefined,
     },
@@ -63,9 +76,16 @@ new Vue({
         send_file() {
             var xhr = new XMLHttpRequest();
             var that = this;
+            var upload_start_time = new Date();
             xhr.upload.onprogress = throttle_some(function (pe) {
                 that.loaded = pe.loaded;
                 that.total = pe.total;
+                var upload_duration = (new Date() - upload_start_time) / 1000;
+                that.estimated_remaining_time = 
+                    // wait for 10s or 10%
+                    upload_duration > 10 || pe.loaded > pe.total / 10 ? 
+                        format_remaining_time(Math.round(upload_duration / pe.loaded * (pe.total - pe.loaded))) : 
+                        '';
             }, 500);
             xhr.onload = function () {
                 console.log("success"); 

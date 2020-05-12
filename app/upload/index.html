@@ -44,8 +44,8 @@
                 {{nb}}
               </option>
         </select> Jours</p>
-        <!--
         <p><label><input type="checkbox" v-model="download_ack">Recevoir un avis de réception à chaque téléchargement</label></p>
+            <!--
         <p><label><input type="checkbox" v-model="summary">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
         -->
         <p><label><input type="checkbox" v-model="with_password">Utiliser un mot de passe pour le téléchargement</label>
@@ -60,6 +60,10 @@
     </form>
     <div v-if="xhr">
         <progress :value="loaded" :max="total" v-if="total"></progress>
+        <span>Temps restant : 
+            <span v-if="estimated_remaining_time">{{estimated_remaining_time}}</span>
+            <i v-else>estimation en cours</i>
+        </span>
         <button @click="abort">Annuler</button>
     </div>
 
