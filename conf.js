@@ -24,6 +24,8 @@ let conf = {
         intercept: '', //'pascal.rigaux@univ.fr',
         transport: sendmailTransport({ path: '/usr/sbin/sendmail' }), // give sendmail with full path (since PATH may not have /usr/sbin/)
     },
+
+    request_to_ip: req => req.headers['x-forwarded-for'] || req.connection.remoteAddress,
 };
 
 module.exports = conf;

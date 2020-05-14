@@ -31,10 +31,30 @@ exports.formatBytes = (bytes, decimals = 2) => {
 exports.express_async = (fn) => (
     (req, res, next) => (
         Promise.resolve(fn(req, res, next)).catch(err => {
-            console.error(err)
-            res.send(err)
+            console.error("ERROR", err)
+            // try to send the error if possible
+            try { res.send(err) } catch (_) {}
         })
     )
+)
+
+exports.promise_WriteStream_pipe = (req, writeStream) => (
+    new Promise((resolve, reject) => {
+        let ok = false
+        req.on('end', () => ok = true)
+        writeStream.on('close', async () => {
+            console.log('writeStream close event')
+            if (ok) resolve()
+        })
+        req.on('aborted', () => console.error("aborted")) // handled by 'close' event
+        req.on('error', () => console.error("error")) // handled by 'close' event
+        req.on('close', async () => {
+            console.log("error occurred, req close")
+            writeStream.close(); // need to be done to avoid leaks
+            reject()
+        })
+        req.pipe(writeStream)   
+    })
 )
 
 // do not call pipe before readStream is "ready" (to allow handling initial readStream errors)
@@ -44,7 +64,7 @@ exports.promise_ReadStream_pipe = (readStream, prepare_response) => (
         readStream.on('end', resolve)
         readStream.on('ready', function () {
             const response = prepare_response()
-            const close_input = _ => readStream.close() // if client aborted/timeout...
+            const close_input = err => { readStream.close(); reject(err || "unknown error") } // if client aborted/timeout...
             response.on('close', close_input) // should be enough
             response.on('error', close_input) // adding more just in case /o\
             response.on('finish', close_input) // adding more just in case /o\

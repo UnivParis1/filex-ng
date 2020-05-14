@@ -16,14 +16,6 @@ const get_client = () => (
 );
 
 
-const v_export_id = (v) => {
-    if (v) {
-        if (!("id" in v)) v.id = v._id;
-        delete v._id;
-    }
-    return v;
-}
-
 const _id = (id) => new mongodb.ObjectID(id)
 
 exports.new_id = () => _id(null)
@@ -33,5 +25,5 @@ exports.collection = async (collection_name) => (
 )
 
 exports.get = (collection, id) => (
-    collection.find({ _id: _id(id) }).limit(1).next().then(v_export_id)
+    collection.find({ _id: _id(id) }).limit(1).next()
 );

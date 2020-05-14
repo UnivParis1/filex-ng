@@ -7,45 +7,47 @@ const helpers = require('./helpers');
 
 const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 
-exports.handle_upload = helpers.express_async((req, res) => {
+exports.handle_upload = helpers.express_async(async (req, res) => {
     if (req.query.daykeep > 45) {
         throw "invalid daykeep";
     }
     const file_id = db.new_id()
     const file = conf.upload_dir + '/' + file_id
     const out = fs.createWriteStream(file)
-    req.pipe(out)
-    let ok = false
-    req.on('end', () => ok = true)
-    out.on('close', async () => {
-        console.log('out close')
-        if (ok) {
-            console.log('success !')
-            const size = (await helpers.fs_stat(file)).size
-            let doc = { 
-                _id: file_id, 
-                size, 
-                uploadTimestamp: new Date(),
-                expireAt: helpers.addDays(new Date(), req.query.daykeep),
-                uploader: req.session.user,
-                ..._.pick(req.query, 'filename', 'type', 'download_ack', 'summary', 'password'),
-            }
-            await (await db.collection('uploads')).insertOne(doc)
-            mail.notify_on_upload(doc) // do not wait for it to return
-            res.json({ ok: ok, get_url: get_url(file_id) })    
+    try {
+        await helpers.promise_WriteStream_pipe(req, out)
+        const size = (await helpers.fs_stat(file)).size
+        const doc = { 
+            _id: file_id, 
+            size, 
+            ..._.pick(req.query, 'filename', 'type', 'download_ack', 'summary', 'password'),
+
+            uploadTimestamp: new Date(),
+            expireAt: helpers.addDays(new Date(), req.query.daykeep),
+            
+            uploader: req.session.user,
+            ip: conf.request_to_ip(req),
+            user_agent: req.headers['user-agent'],
         }
-    })
-    req.on('aborted', () => console.error("aborted")) // handled by 'close' event
-    req.on('error', () => console.error("error")) // handled by 'close' event
-    req.on('close', async () => {
-        console.log("error occurred, req close")
-        out.destroy(); // need to be done to avoid leaks
-        if (!ok) {
-            fs.unlink(file, _ => {})
-        }
-        res.json({ ok: ok })
-    })
+        await (await db.collection('uploads')).insertOne(doc)
+        mail.notify_on_upload(doc) // do not wait for it to return
+        res.json({ ok: true, get_url: get_url(file_id) })    
+    } catch (err) {
+        fs.unlink(file, _ => {})
+        res.json({ ok: false })
+    }
 })
+
+const log_download = async (req, doc, bytes) => {
+    const log = { 
+        doc: doc._id,
+        bytes,
+        timestamp: new Date(),
+        ip: conf.request_to_ip(req),
+        user_agent: req.headers['user-agent'],
+    }
+    await (await db.collection('downloads')).insertOne(log)
+}
 
 exports.handle_download = helpers.express_async(async (req, res, next) => {
     const file_id = req.query.id
@@ -59,7 +61,9 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
     const doc = await db.get(await db.collection('uploads'), file_id)
     if (!doc) throw "unknown id"
     if (doc.password ? doc.password === req.query.password : req.query.auto) {
-        await helpers.promise_ReadStream_pipe(fs.createReadStream(conf.upload_dir + '/' + file_id), () => {
+        const input = fs.createReadStream(conf.upload_dir + '/' + file_id)
+        try {
+          await helpers.promise_ReadStream_pipe(input, () => {
             if (doc.download_ack) {
                 mail.notify_on_download(req, doc) // do not wait for it to return
             }
@@ -70,7 +74,10 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
                 'Content-Length': doc.size,
             }, (v, k) => { if (v) res.setHeader(k, v) })
             return res;
-        })
+          })
+        } finally {
+            log_download(req, doc, input.bytesRead);
+        }
     } else {
         res.set('Content-Type', 'text/html');
 

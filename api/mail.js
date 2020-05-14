@@ -60,7 +60,7 @@ Merci d'avoir utilisé le service d'échange de fichier.
 }
 
 exports.notify_on_download = async (req, doc) => {
-    const client_ip = req.headers['x-forwarded-for']
+    const client_ip = conf.request_to_ip(req)
     const client_host = await helpers.dns_reverse(client_ip).catch(_ => "")
     const subject = `Votre fichier ${doc.filename} a été téléchargé`
     const text = `Le fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été téléchargé.
