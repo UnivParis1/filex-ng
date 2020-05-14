@@ -7,7 +7,7 @@ const helpers = require('./helpers');
 
 const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 
-exports.handle_upload = (req, res) => {
+exports.handle_upload = helpers.express_async((req, res) => {
     if (req.query.daykeep > 45) {
         throw "invalid daykeep";
     }
@@ -35,8 +35,8 @@ exports.handle_upload = (req, res) => {
             res.json({ ok: ok, get_url: get_url(file_id) })    
         }
     })
-    req.on('aborted', () => console.error("aborted"))
-    req.on('error', () => console.error("error"))
+    req.on('aborted', () => console.error("aborted")) // handled by 'close' event
+    req.on('error', () => console.error("error")) // handled by 'close' event
     req.on('close', async () => {
         console.log("error occurred, req close")
         out.destroy(); // need to be done to avoid leaks
@@ -45,19 +45,21 @@ exports.handle_upload = (req, res) => {
         }
         res.json({ ok: ok })
     })
-}
+})
 
-exports.handle_download = async (req, res) => {
+exports.handle_download = helpers.express_async(async (req, res, next) => {
     const file_id = req.query.id
     if (!file_id) {
-        console.error("missing id parameter")
-        res.redirect("/upload/")
-    } else if (!file_id.match(/^\w+$/)) {
-        console.error("invalid id")
-        res.redirect("/upload/")
-    } else {
-        const doc = await db.get(await db.collection('uploads'), file_id)
-        if (doc.password ? doc.password === req.query.password : req.query.auto) {
+        throw "missing id parameter"
+    }
+    if (!file_id.match(/^\w{24}$/)) {
+        throw "invalid id"
+    }
+
+    const doc = await db.get(await db.collection('uploads'), file_id)
+    if (!doc) throw "unknown id"
+    if (doc.password ? doc.password === req.query.password : req.query.auto) {
+        await helpers.promise_ReadStream_pipe(fs.createReadStream(conf.upload_dir + '/' + file_id), () => {
             if (doc.download_ack) {
                 mail.notify_on_download(req, doc) // do not wait for it to return
             }
@@ -66,13 +68,13 @@ exports.handle_download = async (req, res) => {
                 'Content-Disposition': "attachment; filename=" + doc.filename,
                 'Content-transfert-encoding': "binary",
                 'Content-Length': doc.size,
-            }, (v, k) => res.setHeader(k, v))
-            fs.createReadStream(conf.upload_dir + '/' + file_id).pipe(res)    
-        } else {
-            res.set('Content-Type', 'text/html');
-            const password_form = 
+            }, (v, k) => { if (v) res.setHeader(k, v) })
+            return res;
+        })
+    } else {
+        res.set('Content-Type', 'text/html');
 
-            res.end(`
+        res.end(`
     <!DOCTYPE html>
     <html lang="fr">
     <head>
@@ -123,7 +125,6 @@ exports.handle_download = async (req, res) => {
     </div>
     </body>
     </html>
-            `)
-        }       
+        `)
     }
-}
+})

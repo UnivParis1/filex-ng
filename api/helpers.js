@@ -26,3 +26,30 @@ exports.formatBytes = (bytes, decimals = 2) => {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+// from https://github.com/Abazhenov/express-async-handler
+exports.express_async = (fn) => (
+    (req, res, next) => (
+        Promise.resolve(fn(req, res, next)).catch(err => {
+            console.error(err)
+            res.send(err)
+        })
+    )
+)
+
+// do not call pipe before readStream is "ready" (to allow handling initial readStream errors)
+exports.promise_ReadStream_pipe = (readStream, prepare_response) => (
+    new Promise((resolve, reject) => {
+        readStream.on('error', reject)
+        readStream.on('end', resolve)
+        readStream.on('ready', function () {
+            const response = prepare_response()
+            const close_input = _ => readStream.close() // if client aborted/timeout...
+            response.on('close', close_input) // should be enough
+            response.on('error', close_input) // adding more just in case /o\
+            response.on('finish', close_input) // adding more just in case /o\
+            readStream.pipe(response)
+        })
+    })
+)
+

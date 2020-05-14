@@ -18,6 +18,7 @@ app.get('/get', api.handle_download)
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))
 
-app.use((_, res) => res.redirect("/upload"))
+// fallback
+app.all((_, res) => res.redirect("/upload"))
 
 app.listen(conf.port)
