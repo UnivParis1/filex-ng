@@ -10,7 +10,10 @@ const api = require('./api/api')
 const app = express()
 
 app.use('/upload', 
-        session({secret: conf.session.secret, resave: false, saveUninitialized: false}),
+        session({
+            secret: conf.session.secret, resave: false, saveUninitialized: false, 
+            cookie: { maxAge: 5 * 60 * 1000 },
+        }),
         shib.ensure_connected)
 app.put('/upload', api.handle_upload)
 app.post('/upload', api.handle_upload)
