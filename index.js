@@ -5,6 +5,7 @@ const session = require('express-session');
 const conf = require('./conf')
 const shib = require('./api/shib')
 const api = require('./api/api')
+const helpers = require('./api/helpers')
 
 
 const app = express()
@@ -27,3 +28,6 @@ app.use(express.static(__dirname + '/app'))
 app.all("/", (_, res) => res.redirect("/upload"))
 
 app.listen(conf.port)
+
+api.remove_expired()
+setInterval(api.remove_expired, helpers.minutes_to_ms(5))

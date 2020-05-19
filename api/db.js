@@ -1,4 +1,5 @@
 const mongodb = require('mongodb');
+const helpers = require('./helpers');
 const conf = require('../conf');
 
 let client_cache;
@@ -34,4 +35,12 @@ exports.insert_upload = async (doc) => (
 
 exports.insert_download = async (log) => (
     (await collection('downloads')).insertOne(log)
+)
+
+exports.set_deleted = async (doc) => (
+    (await collection('uploads')).updateOne({ _id: doc._id }, { $set: { deleted: true } })
+)
+
+exports.files_to_delete = async () => (
+    (await collection('uploads')).find({ expireAt: { $lte: helpers.now() }, deleted: false }).toArray()
 )

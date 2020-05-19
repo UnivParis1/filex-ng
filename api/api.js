@@ -26,6 +26,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
 
             uploadTimestamp: new Date(),
             expireAt: helpers.addDays(new Date(), req.query.daykeep),
+            deleted: false,
             
             uploader: req.session.user,
             ip: conf.request_to_ip(req),
@@ -137,3 +138,21 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
         `)
     }
 })
+
+exports.remove_expired = async function() {
+    console.log("checking expired files to remove")
+    for (const doc of (await db.files_to_delete())) {
+        console.log("removing expired", doc)
+        try {
+            await helpers.fs_unlink(get_file(doc._id))
+            await db.set_deleted(doc)
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                console.error("file already deleted? marking it deleted")
+                await db.set_deleted(doc)
+            } else {
+                console.error("keeping file non deleted, hopefully the error will go away??", err)
+            }
+        }
+    }
+}
