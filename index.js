@@ -13,7 +13,7 @@ const app = express()
 app.use('/upload', 
         session({
             secret: conf.session.secret, resave: false, saveUninitialized: false, 
-            cookie: { maxAge: 5 * 60 * 1000 },
+            cookie: { maxAge: helpers.minutes_to_ms(5) },
         }),
         shib.ensure_connected)
 app.put('/upload', api.handle_upload)

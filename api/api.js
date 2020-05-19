@@ -24,8 +24,8 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
             size, 
             ..._.pick(req.query, 'filename', 'type', 'download_ack', 'summary', 'password'),
 
-            uploadTimestamp: new Date(),
-            expireAt: helpers.addDays(new Date(), req.query.daykeep),
+            uploadTimestamp: helpers.now(),
+            expireAt: helpers.addDays(helpers.now(), req.query.daykeep),
             deleted: false,
             
             uploader: req.session.user,
@@ -45,7 +45,7 @@ const log_download = async (req, doc, bytes) => {
     const log = { 
         doc: doc._id,
         bytes,
-        timestamp: new Date(),
+        timestamp: helpers.now(),
         ip: conf.request_to_ip(req),
         user_agent: req.headers['user-agent'],
     }
