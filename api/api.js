@@ -29,7 +29,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
             ip: conf.request_to_ip(req),
             user_agent: req.headers['user-agent'],
         }
-        await (await db.collection('uploads')).insertOne(doc)
+        await db.insert_upload(doc)
         mail.notify_on_upload(doc) // do not wait for it to return
         res.json({ ok: true, get_url: get_url(file_id) })    
     } catch (err) {
@@ -46,7 +46,7 @@ const log_download = async (req, doc, bytes) => {
         ip: conf.request_to_ip(req),
         user_agent: req.headers['user-agent'],
     }
-    await (await db.collection('downloads')).insertOne(log)
+    await db.insert_download(log)
 }
 
 exports.handle_download = helpers.express_async(async (req, res, next) => {
@@ -58,7 +58,7 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
         throw "invalid id"
     }
 
-    const doc = await db.get(await db.collection('uploads'), file_id)
+    const doc = await db.get_upload(file_id)
     if (!doc) throw "unknown id"
     if (doc.password ? doc.password === req.query.password : req.query.auto) {
         const input = fs.createReadStream(conf.upload_dir + '/' + file_id)

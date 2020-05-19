@@ -20,10 +20,18 @@ const _id = (id) => new mongodb.ObjectID(id)
 
 exports.new_id = () => _id(null)
 
-exports.collection = async (collection_name) => (
+const collection = async (collection_name) => (
     (await get_client()).collection(collection_name)
 )
 
-exports.get = (collection, id) => (
-    collection.find({ _id: _id(id) }).limit(1).next()
+exports.get_upload = async (id) => (
+    (await collection('uploads')).find({ _id: _id(id) }).limit(1).next()
 );
+
+exports.insert_upload = async (doc) => (
+    (await collection('uploads')).insertOne(doc)
+)
+
+exports.insert_download = async (log) => (
+    (await collection('downloads')).insertOne(log)
+)
