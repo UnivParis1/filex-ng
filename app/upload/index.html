@@ -33,11 +33,10 @@
     </div>
   </div>
   <div v-else>
+
+    <p>Cette application permet d'envoyer de gros fichiers (jusqu'à 2 Go).</p>
+
     <form @submit.prevent="send_file(file)">
-
-        <p>Cette application permet d'envoyer de gros fichiers (jusqu'à 2 Go).</p>
-
-        <p><strong>Veuillez sélectionner le document à déposer ("Parcourir...")</strong></p>
 
         <p>Expiration du fichier : <select v-model="daykeep">
             <option v-for="nb in daykeep_opts" :value="nb">
@@ -55,7 +54,10 @@
             </span>
         </p>
 
-        <input type="file" @change="file_selected">
+        <label class="for-file">
+            Sélectionnez le fichier à déposer
+            <input type="file" @change="file_selected">
+        </label>
         <input type="submit" value="Envoyer" style="display: none">
     </form>
     <div v-if="uploading_xhr">

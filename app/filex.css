@@ -35,3 +35,13 @@ ul {
     font-size: 26px;
     padding: 9px 0px 13px 0px !important;
 }
+
+label.for-file {
+    display: inline-block;
+    border: 1px solid black;
+    background: yellow;
+    padding: 5px;
+}
+label.for-file input {
+    display: none;
+}
