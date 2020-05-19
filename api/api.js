@@ -7,12 +7,14 @@ const helpers = require('./helpers');
 
 const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 
+const get_file = (file_id) => conf.upload_dir + '/' + file_id
+
 exports.handle_upload = helpers.express_async(async (req, res) => {
     if (req.query.daykeep > 45) {
         throw "invalid daykeep";
     }
     const file_id = db.new_id()
-    const file = conf.upload_dir + '/' + file_id
+    const file = get_file(file_id)
     const out = fs.createWriteStream(file)
     try {
         await helpers.promise_WriteStream_pipe(req, out)
@@ -61,7 +63,7 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
     const doc = await db.get_upload(file_id)
     if (!doc) throw "unknown id"
     if (doc.password ? doc.password === req.query.password : req.query.auto) {
-        const input = fs.createReadStream(conf.upload_dir + '/' + file_id)
+        const input = fs.createReadStream(get_file(file_id))
         try {
           await helpers.promise_ReadStream_pipe(input, () => {
             if (doc.download_ack) {
