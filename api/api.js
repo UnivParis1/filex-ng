@@ -24,6 +24,20 @@ exports.user_info = helpers.express_async(async (req, res) => {
     res.json(await get_user_info(req.session.user))
 })
 
+const add_downloadCount = async (docs) => {
+    const id2count = await db.files_download_count(docs.map(doc => doc._id))
+    docs.forEach(doc => doc.downloadCount = id2count[doc._id] || 0)
+}
+exports.user_files = helpers.express_async(async (req, res) => {
+    let docs = await db.user_files(req.session.user, req.query.include_deleted === 'true')
+    await add_downloadCount(docs)
+    res.json(docs)
+})
+
+exports.user_file = helpers.express_async(async (req, res) => {
+    res.json(await db.user_file(req.session.user, req.params.id))
+})
+
 exports.handle_upload = helpers.express_async(async (req, res) => {
     const user_info = await get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {

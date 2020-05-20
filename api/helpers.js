@@ -41,12 +41,17 @@ exports.formatBytes = (bytes, decimals = 2) => {
 }
 
 // similar to lodash.keyBy, but also remove the key from each object
-exports.keyBy = (l, key) => {
+// optional "valueKey" parameter
+exports.keyBy = (l, key, valueKey) => {
     let r = {}
     for (const o of l) {
         const k = o[key]
-        delete o[key]
-        r[k] = o;
+        if (valueKey) {
+            r[k] = o[valueKey]
+        } else {
+            delete o[key]
+            r[k] = o;
+        }
     }
     return r
 }

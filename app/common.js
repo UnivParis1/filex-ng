@@ -1,3 +1,9 @@
+function array_sum(arr) {
+    let r = 0;
+    arr.forEach(function (elt) { r += elt })
+    return r;
+}
+
 function encode_params(params) {
     var k;
     var r = [];
