@@ -58,7 +58,7 @@
         <input type="file" @change="file_selected">
         <input type="submit" value="Envoyer" style="display: none">
     </form>
-    <div v-if="xhr">
+    <div v-if="uploading_xhr">
         <progress :value="loaded" :max="total" v-if="total"></progress>
         <span>Temps restant : 
             <span v-if="estimated_remaining_time">{{estimated_remaining_time}}</span>

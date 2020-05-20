@@ -48,6 +48,20 @@ function format_remaining_time(seconds) {
     return Math.round(minutes) + "m";
 }
 
+function call_xhr(method, url, body, prepare_xhr) {
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        if (prepare_xhr) prepare_xhr(xhr);
+        xhr.onerror = reject;
+        xhr.onload = function () {
+            const resp = JSON.parse(xhr.responseText);
+            if (resp) resolve(resp); else reject(xhr.responseText);
+        };
+        xhr.open(method, url, true);
+        xhr.send(body);
+    })
+}
+
 new Vue({
     data: {
         daykeep_opts: [1,2,3,4,5,6,7,14,15,21,30,45],
@@ -55,7 +69,7 @@ new Vue({
         download_ack: false, summary: false, with_password: false,
         password: undefined,
         file: undefined,
-        xhr: undefined, loaded: 0, total: 0, estimated_remaining_time: '',
+        uploading_xhr: undefined, loaded: 0, total: 0, estimated_remaining_time: '',
 
         get_url: undefined, file_name: undefined, file_size: undefined,
     },
@@ -70,32 +84,12 @@ new Vue({
             this.send_file(this.file);
         },
         abort() {
-            this.xhr.abort();
-            this.xhr = undefined;
+            this.uploading_xhr.abort();
+            this.uploading_xhr = undefined;
         },
         send_file() {
-            var xhr = new XMLHttpRequest();
             var that = this;
             var upload_start_time = new Date();
-            xhr.upload.onprogress = throttle_some(function (pe) {
-                that.loaded = pe.loaded;
-                that.total = pe.total;
-                var upload_duration = (new Date() - upload_start_time) / 1000;
-                that.estimated_remaining_time = 
-                    // wait for 10s or 10%
-                    upload_duration > 10 || pe.loaded > pe.total / 10 ? 
-                        format_remaining_time(Math.round(upload_duration / pe.loaded * (pe.total - pe.loaded))) : 
-                        '';
-            }, 500);
-            xhr.onload = function () {
-                console.log("success"); 
-                that.xhr = undefined;
-                console.log(xhr.responseText);
-                var resp = JSON.parse(xhr.responseText);
-                if (resp) {
-                    that.get_url = resp.get_url;
-                }
-            };
             var params = {
                 'filename': this.file.name,                
                 'type': this.file.type,
@@ -104,9 +98,23 @@ new Vue({
                 'summary': this.summary,
                 'password': this.with_password && this.password,
             };
-            xhr.open('post', '/upload?' + encode_params(params), true);
-            xhr.send(this.file);
-            this.xhr = xhr;
+            call_xhr('POST', '/upload?' + encode_params(params), this.file, function (xhr) {
+                that.uploading_xhr = xhr;
+                xhr.upload.onprogress = throttle_some(function (pe) {
+                    that.loaded = pe.loaded;
+                    that.total = pe.total;
+                    var upload_duration = (new Date() - upload_start_time) / 1000;
+                    that.estimated_remaining_time = 
+                        // wait for 10s or 10%
+                        upload_duration > 10 || pe.loaded > pe.total / 10 ? 
+                            format_remaining_time(Math.round(upload_duration / pe.loaded * (pe.total - pe.loaded))) : 
+                            '';
+                }, 500);
+            }).then(function (resp) {
+                that.get_url = resp.get_url;
+            }).finally(function () {
+                that.uploading_xhr = undefined;
+            });
 
             this.file_name = this.file.name;
             this.file_size = formatBytes(this.file.size, 2);
