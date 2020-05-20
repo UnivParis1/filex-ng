@@ -11,45 +11,45 @@
 <script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
       
 <div id="main" v-cloak>
-  <div v-if="get_url">
+  <div v-if="uploaded.get_url">
     <div>
-    <p>Le fichier <b>{{file_name}}</b> a été déposé.</p>
+    <p>Le fichier <b>{{uploaded.file_name}}</b> a été déposé.</p>
 
     <p>Pour qu'un utilisateur télécharge votre fichier, envoyez lui cette adresse :</p>
-    <p><a :href="get_url">{{get_url}}</a></p>
+    <p><a :href="uploaded.get_url">{{uploaded.get_url}}</a></p>
     
-    <p>Votre fichier sera automatiquement supprimé du serveur dans <b>{{daykeep}}</b> jours.</p>
+    <p>Votre fichier sera automatiquement supprimé du serveur dans <b>{{upload.daykeep}}</b> jours.</p>
     </div>
     <div style="margin-top: 2rem">
      <i>Informations</i> :
      <ul>
-      <li> Taille : {{file_size}}</li>
+      <li> Taille : {{uploaded.file_size}}</li>
       <li> Disponible jusqu'au : {{expiration}}</li>
       </ul>
     </div>
 
     <div style="margin-top: 2rem">
-        <button @click="get_url = undefined">Déposer un autre fichier</button>
+        <button @click="uploaded.get_url = undefined">Déposer un autre fichier</button>
     </div>
   </div>
   <div v-else>
 
     <p>Cette application permet d'envoyer de gros fichiers (jusqu'à 2 Go).</p>
 
-    <form @submit.prevent="send_file(file)">
+    <form>
 
-        <p>Expiration du fichier : <select v-model="daykeep">
-            <option v-for="nb in daykeep_opts" :value="nb">
+        <p>Expiration du fichier : <select v-model="upload.daykeep">
+            <option v-for="nb in upload.daykeep_opts" :value="nb">
                 {{nb}}
               </option>
         </select> Jours</p>
-        <p><label><input type="checkbox" v-model="download_ack">Recevoir un avis de réception à chaque téléchargement</label></p>
+        <p><label><input type="checkbox" v-model="upload.download_ack">Recevoir un avis de réception à chaque téléchargement</label></p>
             <!--
-        <p><label><input type="checkbox" v-model="summary">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
+        <p><label><input type="checkbox" v-model="upload.summary">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
         -->
-        <p><label><input type="checkbox" v-model="with_password">Utiliser un mot de passe pour le téléchargement</label>
-            <span v-if="with_password">:
-              <input type="password" v-model="password" size="15" maxlength="30"><br>
+        <p><label><input type="checkbox" v-model="upload.with_password">Utiliser un mot de passe pour le téléchargement</label>
+            <span v-if="upload.with_password">:
+              <input type="password" v-model="upload.password" size="15" maxlength="30"><br>
               <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
             </span>
         </p>
@@ -60,13 +60,13 @@
         </label>
         <input type="submit" value="Envoyer" style="display: none">
     </form>
-    <div v-if="uploading_xhr">
-        <progress :value="loaded" :max="total" v-if="total"></progress>
+    <div v-if="uploading.xhr">
+        <progress :value="uploading.loaded" :max="uploading.total" v-if="uploading.total"></progress>
         <span>Temps restant : 
-            <span v-if="estimated_remaining_time">{{estimated_remaining_time}}</span>
+            <span v-if="uploading.estimated_remaining_time">{{uploading.estimated_remaining_time}}</span>
             <i v-else>estimation en cours</i>
         </span>
-        <button @click="abort">Annuler</button>
+        <button @click="upload_abort">Annuler</button>
     </div>
 
     <p></p>

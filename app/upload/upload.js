@@ -64,60 +64,65 @@ function call_xhr(method, url, body, prepare_xhr) {
 
 new Vue({
     data: {
-        daykeep_opts: [1,2,3,4,5,6,7,14,15,21,30,45],
-        daykeep: 15,
-        download_ack: false, summary: false, with_password: false,
-        password: undefined,
-        file: undefined,
-        uploading_xhr: undefined, loaded: 0, total: 0, estimated_remaining_time: '',
-
-        get_url: undefined, file_name: undefined, file_size: undefined,
+        upload: {
+            daykeep_opts: [1,2,3,4,5,6,7,14,15,21,30,45],
+            daykeep: 15,
+            download_ack: false, summary: false, with_password: false,
+            password: undefined,
+            file: undefined,
+        },
+        uploading: {
+            xhr: undefined, loaded: 0, total: 0, estimated_remaining_time: '',
+        },
+        uploaded: {
+            get_url: undefined, 
+            file_name: undefined, file_size: undefined,
+        },
     },
     computed: {
         expiration() {
-            return addDays(new Date(), this.daykeep).toLocaleString();
+            return addDays(new Date(), this.upload.daykeep).toLocaleString();
         },
     },
     methods: {
         file_selected(event) {
-            this.file = event.target.files[0];
-            this.send_file(this.file);
+            this.send_file(event.target.files[0]);
         },
-        abort() {
-            this.uploading_xhr.abort();
-            this.uploading_xhr = undefined;
+        upload_abort() {
+            this.uploading.xhr.abort();
+            this.uploading.xhr = undefined;
         },
-        send_file() {
+        send_file(file) {
             var that = this;
             var upload_start_time = new Date();
             var params = {
-                'filename': this.file.name,                
-                'type': this.file.type,
-                'daykeep': this.daykeep,
-                'download_ack': this.download_ack,
-                'summary': this.summary,
-                'password': this.with_password && this.password,
+                'filename': file.name,                
+                'type': file.type,
+                'daykeep': this.upload.daykeep,
+                'download_ack': this.upload.download_ack,
+                'summary': this.upload.summary,
+                'password': this.upload.with_password && this.upload.password,
             };
-            call_xhr('POST', '/user/upload?' + encode_params(params), this.file, function (xhr) {
-                that.uploading_xhr = xhr;
+            call_xhr('POST', '/user/upload?' + encode_params(params), file, function (xhr) {
+                that.uploading.xhr = xhr;
                 xhr.upload.onprogress = throttle_some(function (pe) {
-                    that.loaded = pe.loaded;
-                    that.total = pe.total;
+                    that.uploading.loaded = pe.loaded;
+                    that.uploading.total = pe.total;
                     var upload_duration = (new Date() - upload_start_time) / 1000;
-                    that.estimated_remaining_time = 
+                    that.uploading.estimated_remaining_time = 
                         // wait for 10s or 10%
                         upload_duration > 10 || pe.loaded > pe.total / 10 ? 
                             format_remaining_time(Math.round(upload_duration / pe.loaded * (pe.total - pe.loaded))) : 
                             '';
                 }, 500);
             }).then(function (resp) {
-                that.get_url = resp.get_url;
+                that.uploaded.get_url = resp.get_url;
             }).finally(function () {
-                that.uploading_xhr = undefined;
+                that.uploading.xhr = undefined;
             });
 
-            this.file_name = this.file.name;
-            this.file_size = formatBytes(this.file.size, 2);
+            this.uploaded.file_name = file.name;
+            this.uploaded.file_size = formatBytes(file.size, 2);
         },
     },
 }).$mount("#main");
