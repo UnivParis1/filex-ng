@@ -123,7 +123,10 @@ new Vue({
             });
 
             this.uploaded.file_name = file.name;
-            this.uploaded.file_size = formatBytes(file.size, 2);
+            this.uploaded.size = file.size;
         },
+    },
+    filters: {
+        formatBytes: formatBytes,
     },
 }).$mount("#main");

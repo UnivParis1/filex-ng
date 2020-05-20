@@ -23,7 +23,7 @@
     <div style="margin-top: 2rem">
      <i>Informations</i> :
      <ul>
-      <li> Taille : {{uploaded.file_size}}</li>
+      <li> Taille : {{uploaded.size | formatBytes(2)}}</li>
       <li> Disponible jusqu'au : {{expiration}}</li>
       </ul>
     </div>
