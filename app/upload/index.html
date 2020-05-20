@@ -34,7 +34,7 @@
   </div>
   <div v-else>
 
-    <p>Cette application permet d'envoyer de gros fichiers (jusqu'à 2 Go).</p>
+    <p>Cette application permet d'envoyer de gros fichiers (il vous reste {{info.remaining_quota | formatBytes(2)}}).</p>
 
     <form>
 

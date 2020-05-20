@@ -20,6 +20,14 @@ exports.format_date = (date) => (
     date.toLocaleString('fr-FR', { hour12: false })
 )
 
+exports.un_formatBytes = (formatted) => {
+    const suffixes = { K: 1024, M: 1024 ** 2, G: 1024 ** 3 }
+    const m = ("" + formatted).match(/^([\d.]+)\s*([KMG])i?[BO]?$/i)
+    if (!m) throw "invalid formatted bytes " + formatted
+    return parseFloat(m[1]) * suffixes[m[2]]
+}
+
+// from stackoverflow. complex but it works
 exports.formatBytes = (bytes, decimals = 2) => {
     if (bytes === 0) return '0 Octet';
 
@@ -31,6 +39,18 @@ exports.formatBytes = (bytes, decimals = 2) => {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+// similar to lodash.keyBy, but also remove the key from each object
+exports.keyBy = (l, key) => {
+    let r = {}
+    for (const o of l) {
+        const k = o[key]
+        delete o[key]
+        r[k] = o;
+    }
+    return r
+}
+
 
 // from https://github.com/Abazhenov/express-async-handler
 exports.express_async = (fn) => (

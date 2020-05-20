@@ -44,3 +44,11 @@ exports.set_deleted = async (doc) => (
 exports.files_to_delete = async () => (
     (await collection('uploads')).find({ expireAt: { $lte: helpers.now() }, deleted: false }).toArray()
 )
+
+// return count & total_size for deleted & non-deleted files
+exports.files_summary_by_deleted = async (user) => (
+    helpers.keyBy(await (await collection('uploads')).aggregate([ 
+        { $match: { "uploader.eppn": user.eppn } }, 
+        { $group: { "_id": "$deleted", count: {$sum: 1}, total_size: {$sum: '$size' } } },
+    ]).toArray(), '_id')
+)

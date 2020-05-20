@@ -65,6 +65,12 @@ function call_xhr(method, url, body, prepare_xhr) {
 }
 
 new Vue({
+    created() {
+        var that = this;
+        call_xhr('GET', '/user/info', null).then(function (info) {
+            that.info = info;
+        })
+    },
     data: {
         upload: {
             daykeep_opts: [1,2,3,4,5,6,7,14,15,21,30,45],
@@ -79,6 +85,9 @@ new Vue({
         uploaded: {
             get_url: undefined, 
             file_name: undefined, file_size: undefined,
+        },
+        info: {
+            remaining_quota: 'N/A',
         },
     },
     computed: {

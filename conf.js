@@ -1,10 +1,16 @@
 const sendmailTransport = require('nodemailer-sendmail-transport');
+const helpers = require('./api/helpers')
 
 let conf = {
     port: 6001,
 
     our_vhost: 'filex-ng.univ.fr',
     apache_shib_host: 'localhost',
+
+    user_default: {
+        quota: helpers.un_formatBytes('6G'),
+        max_daykeep: 45,
+    },
 
     mongodb: { 
         url: "mongodb://localhost/filex-ng",

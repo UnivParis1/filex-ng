@@ -9,8 +9,24 @@ const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 
 const get_file = (file_id) => conf.upload_dir + '/' + file_id
 
+const get_user_info = async (user) => {
+    if (!user) throw "need relog"
+    let info = {
+        quota: conf.user_default.quota,
+        max_daykeep: conf.user_default.max_daykeep,
+        files_summary_by_deleted: await db.files_summary_by_deleted(user),
+    }
+    info.remaining_quota = info.quota - info.files_summary_by_deleted.false.total_size
+    return info
+}
+
+exports.user_info = helpers.express_async(async (req, res) => {
+    res.json(await get_user_info(req.session.user))
+})
+
 exports.handle_upload = helpers.express_async(async (req, res) => {
-    if (req.query.daykeep > 45) {
+    const user_info = await get_user_info(req.session.user)
+    if (req.query.daykeep > user_info.max_daykeep) {
         throw "invalid daykeep";
     }
     const file_id = db.new_id()
@@ -19,6 +35,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     try {
         await helpers.promise_WriteStream_pipe(req, out)
         const size = (await helpers.fs_stat(file)).size
+        if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
         const doc = { 
             _id: file_id, 
             size, 

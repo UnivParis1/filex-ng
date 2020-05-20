@@ -18,6 +18,7 @@ const require_session = session({
 app.use('/user', require_session)
 app.put('/user/upload', api.handle_upload)
 app.post('/user/upload', api.handle_upload)
+app.get('/user/info', api.user_info)
 
 app.get('/get', api.handle_download) 
   
