@@ -37,7 +37,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
         res.json({ ok: true, get_url: get_url(file_id) })    
     } catch (err) {
         fs.unlink(file, _ => {})
-        res.json({ ok: false })
+        res.status(500).json({ ok: false, err })
     }
 })
 

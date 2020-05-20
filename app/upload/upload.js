@@ -56,7 +56,7 @@ function call_xhr(method, url, body, prepare_xhr) {
         xhr.onerror = reject;
         xhr.onload = function () {
             const resp = JSON.parse(xhr.responseText);
-            if (resp) resolve(resp); else reject(xhr.responseText);
+            if (resp && xhr.status === 200) resolve(resp); else reject(resp || xhr.responseText);
         };
         xhr.open(method, url, true);
         xhr.send(body);
@@ -118,6 +118,8 @@ new Vue({
                 }, 500);
             }).then(function (resp) {
                 that.uploaded.get_url = resp.get_url;
+            }).catch(function (resp) {
+                alert(resp && resp.err || resp);
             }).finally(function () {
                 that.uploading.xhr = undefined;
             });
