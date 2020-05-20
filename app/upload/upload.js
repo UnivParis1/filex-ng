@@ -23,6 +23,7 @@ function throttle_some(func, timeFrame) {
         }
     };
 }
+// from stackoverflow. complex but it works
 function formatBytes(bytes, decimals) {
     if (bytes === 0) return '0 Octet';
 
