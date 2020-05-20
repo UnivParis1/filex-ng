@@ -98,7 +98,7 @@ new Vue({
                 'summary': this.summary,
                 'password': this.with_password && this.password,
             };
-            call_xhr('POST', '/upload?' + encode_params(params), this.file, function (xhr) {
+            call_xhr('POST', '/user/upload?' + encode_params(params), this.file, function (xhr) {
                 that.uploading_xhr = xhr;
                 xhr.upload.onprogress = throttle_some(function (pe) {
                     that.loaded = pe.loaded;
