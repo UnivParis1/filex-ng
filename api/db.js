@@ -60,8 +60,8 @@ const filter_deleted = (filter, include_deleted) => (
 exports.user_files = async (user, include_deleted) => (
     (await collection('uploads')).find(
         filter_deleted({ "uploader.eppn": user.eppn }, include_deleted),
-        { projection: { uploader: 0 } },
-    ).toArray()
+        { projection: { uploader: 0, password: 0 } },
+    ).sort({ "uploadTimestamp": -1 }).toArray()
 )
 
 exports.user_file = async (user, id) => (
@@ -78,15 +78,9 @@ exports.files_download_count = async (ids) => (
     ]).toArray(), '_id', 'count')
 )
 
-exports.file_download = async (id) => (
+exports.file_downloads = async (id) => (
     (await collection('downloads')).find(
         { doc: _id(id) },
-        { projection: { doc: 0 }},
+        { projection: { ip: 1, timestamp: 1, bytes: 1, _id: 0 }},
     ).toArray()
 )
-
-// TODO ajout index "uploader.eppn" sur "db.uploads"
-
-// nb de téléchargement
-//db.downloads.aggregate([ { $match: { doc: { $in: [ ObjectId("5ebb1a76aa8d98a84dc9f936"), ObjectId("5ebb1a76aa8d98a84dc9f935") ] } } }, { $group: { "_id": "$doc", count: {$sum: 1}  } } ])
-//db.downloads.count({ doc: ObjectId("5ebb1a76aa8d98a84dc9f935") })
