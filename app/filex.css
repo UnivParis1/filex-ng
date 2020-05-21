@@ -143,3 +143,5 @@ tr:nth-child(even) {
     color: red;
     font-style: italic;
 }
+
+dt { font-weight: bold;}
