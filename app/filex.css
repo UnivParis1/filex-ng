@@ -3,19 +3,24 @@
 }
 
 body {
-    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     text-align: left;
+    font-size: 13px;
+    color: #666;
 }
+
 .error {
     font-weight: bold;
     color: red;
     font-size: 120%;
 }
+
 .notes {
-	font-size: smaller ;
-	color: red;
-	font-style: italic;
+    font-size: 14px;
+    color: #e55302;
+    font-style: italic;
 }
+
 #main {
     margin: 5pt;
 }
@@ -25,7 +30,7 @@ ul {
 }
 
 
-.pE-theme-paris1-2016 #bandeau-anonyme { 
+.pE-theme-paris1-2016 #bandeau-anonyme {
     display: none;
 }
 
@@ -36,12 +41,86 @@ ul {
     padding: 9px 0px 13px 0px !important;
 }
 
-label.for-file {
-    display: inline-block;
-    border: 1px solid black;
-    background: yellow;
+h2 {
+    padding-left: 15px;
+    font-weight: normal;
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+h3 {
+    padding-left: 15px;
+    color: #e55302;
+    font-size: 14px;
+
+}
+
+p,
+ul li {
+    padding-left: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+form {
+    background: #f7F7F8;
+    border-bottom: 1px #ddd solid;
+    border-top: 1px #ddd solid;
+    padding-top: 15px;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+form p {
+    padding-left: 20px;
+    font-size: 14px;
+}
+
+select {
+    padding-left: 8px;
+    font-size: 15px;
+}
+
+form input {
+    height: 16px;
+    margin-right: 15px;
     padding: 5px;
 }
-label.for-file input {
-    display: none;
+
+label.for-input-file-upload {
+    display: block;
+    font-size: 18px;
+    border: 2px solid #205599;
+    height: 38px;
+    line-height: 35px;
+    box-shadow: none;
+    background: #00326E;
+    border-radius: 9px;
+    color: #eee;
+
+    width: 30%;
+    min-width: 300px;
+    padding: 6px 8px;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+label.for-input-file-upload svg {
+    fill: #c89108;
+    padding: 0px 4px 0px 4px;
+    margin-bottom: -1px;
+    height: 15px;
+    width: auto;
+}
+
+label.for-input-file-upload:hover {
+    background: #20558e;
+    border: 2px solid #2055cc;
+    color: white;
+    text-shadow: 1px 1px 0 rgb(0, 0, 0);
+    background: linear-gradient(to top, #00326E, #205599);
 }
