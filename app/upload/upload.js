@@ -86,9 +86,7 @@ new Vue({
             get_url: undefined, 
             file_name: undefined, file_size: undefined,
         },
-        info: {
-            remaining_quota: 'N/A',
-        },
+        info: undefined,
     },
     computed: {
         expiration() {

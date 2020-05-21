@@ -11,7 +11,10 @@
 <script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
       
 <div id="main" v-cloak>
-  <div v-if="uploaded.get_url">
+  <div v-if="!info">
+      Chargement en cours, veuillez patienter...
+  </div>
+  <div v-else-if="uploaded.get_url">
     <div>
     <p>Le fichier <b>{{uploaded.file_name}}</b> a été déposé.</p>
 
