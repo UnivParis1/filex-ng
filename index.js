@@ -24,13 +24,10 @@ app.get('/user/file/:id', api.user_file)
 
 app.get('/get', api.handle_download) 
   
-app.use(['/upload', '/manage.html', '/manage-file.html'], require_session, shib.ensure_connected)
+app.use([/^\/$/, '/manage.html', '/manage-file.html'], require_session, shib.ensure_connected)
 
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))
-
-// fallback
-app.all("/", (_, res) => res.redirect("/upload"))
 
 app.listen(conf.port)
 
