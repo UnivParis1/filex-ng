@@ -60,14 +60,14 @@ const filter_deleted = (filter, include_deleted) => (
 exports.user_files = async (user, include_deleted) => (
     (await collection('uploads')).find(
         filter_deleted({ "uploader.eppn": user.eppn }, include_deleted),
-        { fields: { uploader: 0 } },
+        { projection: { uploader: 0 } },
     ).toArray()
 )
 
 exports.user_file = async (user, id) => (
     (await collection('uploads')).find(
         { "uploader.eppn": user.eppn, _id: _id(id) },
-        { fields: { uploader: 0 } },
+        { projection: { uploader: 0 } },
     ).limit(1).next()
 )
 
