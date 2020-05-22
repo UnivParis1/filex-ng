@@ -14,8 +14,6 @@ const beginning = (more_meta) => `<!DOCTYPE html>
   <link href="filex.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-<script> window.prolongation_ENT_args = { current: "CFilex", layout_url: "/EsupUserApps/layout" }; </script>
-<script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
 `
 
 const base_js_files = `
@@ -40,10 +38,6 @@ exports.get__before_download = async (query, doc, res) => {
     res.end(beginning(doc.password ? '' :
     `<meta http-equiv="refresh" content="5; URL=${get_url(doc._id)}&auto=1">`
 ) + `
-<script> 
-    window.bandeau_anonyme = {};
-</script>
-<script src="https://ent.univ-paris1.fr/assets/bandeau-anonyme/loader.js"></script>
 <div id=bandeau-anonyme-title>Envoi de fichiers avec Filex</div>
 <div id="main">
     <p>Vous avez demandé le fichier <b>${doc.filename}</b></p>
