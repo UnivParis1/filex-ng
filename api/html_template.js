@@ -33,3 +33,45 @@ exports.static = async (req, res) => {
     res.set('Content-Type', 'text/html');
     res.end(beginning('') + base_js_files + html + end)
 }
+
+exports.get__before_download = async (query, doc, res) => {
+    res.set('Content-Type', 'text/html');
+
+    res.end(beginning(doc.password ? '' :
+    `<meta http-equiv="refresh" content="5; URL=${get_url(doc._id)}&auto=1">`
+) + `
+<script> 
+    window.bandeau_anonyme = {};
+</script>
+<script src="https://ent.univ-paris1.fr/assets/bandeau-anonyme/loader.js"></script>
+<div id=bandeau-anonyme-title>Envoi de fichiers avec Filex</div>
+<div id="main">
+    <p>Vous avez demandé le fichier <b>${doc.filename}</b></p>
+    <p><b><i>Informations :</i></b></p>
+        <ul>
+        <li><b>Taille</b> : ${doc.size} Octets</li>
+        <li><b>Publié le</b> : ${doc.uploadTimestamp.toLocaleString()}</li>
+        <li><b>Disponible jusqu'au</b> : ${doc.expireAt.toLocaleString()}</li>
+        <li><b>Publié par</b> : ${doc.uploader.mail}</li>
+    </ul>
+    
+` + (doc.password ? 
+`<form>
+<p>
+    <label>
+        <strong>Ce fichier nécessite un mot de passe pour être téléchargé :</strong>
+        <input type="password" size="15" name="password" required> 
+    </label> 
+    <input type="hidden" name="id" value="${doc._id}"> 
+    <input type="submit" value="Valider" class="Submit">
+    ` + (query.password && doc.password !== query.password ? '<span class="error">Mot de passe invalide, veuillez réessayer</span>' : '') + `
+</p>
+</form>` : 
+`<p>Si le téléchargement ne commence pas automatiquement dans 5 secondes, <a href="${get_url(doc._id)}&auto=1">suivez ce lien</a></p>`
+) + `
+    <div style="margin-top: 2rem"><i>Note :</i>
+     <br>
+     Le nom de fichier que vous proposera votre navigateur au téléchargement peut être différent du vrai nom du fichier.
+    </div>
+</div>` + end)
+}
