@@ -1,16 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FileX</title>
-  <link href="lib.css" type="text/css" rel="stylesheet">
-  <link href="filex.css" type="text/css" rel="stylesheet">
-</head>
-<body>
-<script> window.prolongation_ENT_args = { current: "CFilex", layout_url: "/EsupUserApps/layout" }; </script>
-<script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
-      
 <div id="main" v-cloak>
   <div v-if="!info">
       Chargement en cours, veuillez patienter...
@@ -82,7 +69,7 @@
 
     <p>Espace Utilisé : {{info.files_summary_by_deleted.false.total_size | formatBytes(2)}} / {{info.quota | formatBytes(2)}}</p>
 
-    <p><a href="/manage.html">Gérer mes fichiers</a></p>
+    <p><a href="/manage">Gérer mes fichiers</a></p>
 
     <h3>Conditions d'utilisation du service</h3>
     <ul>
@@ -93,9 +80,4 @@
   </div>
 </div>
 
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="common.js"></script>
 <script src="upload.js"></script>
-
-</body>
-</html>

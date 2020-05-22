@@ -6,6 +6,7 @@ const conf = require('./conf')
 const shib = require('./api/shib')
 const api = require('./api/api')
 const helpers = require('./api/helpers')
+const html_template = require('./api/html_template')
 
 
 const app = express()
@@ -28,7 +29,7 @@ app.get('/user/file/:id', api.user_file)
 
 app.get('/get', api.handle_download) 
   
-app.use([/^\/$/, '/manage.html', '/manage-file.html'], get_session, shib.ensure_connected)
+app.get([/^\/$/, '/manage', '/manage-file'], get_session, shib.ensure_connected, html_template.static)
 
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))

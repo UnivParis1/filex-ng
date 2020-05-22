@@ -4,6 +4,7 @@ const util = require('util')
 
 exports.fs_stat = util.promisify(fs.stat)
 exports.fs_unlink = util.promisify(fs.unlink)
+exports.fs_readFile = util.promisify(fs.readFile)
 exports.dns_reverse = util.promisify(dns.reverse)
 
 exports.minutes_to_ms = (minutes) => minutes * 60 * 1000

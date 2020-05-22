@@ -1,29 +1,31 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FileX</title>
-  <link href="lib.css" type="text/css" rel="stylesheet">
-  <link href="filex.css" type="text/css" rel="stylesheet">
-</head>
-<body>
-<script> window.prolongation_ENT_args = { current: "CFilex", layout_url: "/EsupUserApps/layout" }; </script>
-<script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
-      
-<div id="main" v-cloak>
+ <div id="main" v-cloak>
   <div v-if="!file">
       Chargement en cours, veuillez patienter...
   </div>
   <div v-else>
-      <h2>{{file.filename}}</h2>
-      {{file}}
-  </div>
-</div>
+      <h2>Fichier {{file.filename}}</h2>
 
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="common.js"></script>
-<script src="manage-file.js"></script>
+      <dl>
+      <dt>Déposé le</dt><dd>{{file.uploadTimestamp | dateToLocaleString}}</dd>
+      <dt>Expire le</dt> <dd>{{file.expireAt | dateToLocaleString}}</dd>
+      <dt>Taille</dt> <dd>{{file.size | formatBytes(2)}}</dd>
+      <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
+      <dt>Adresse de téléchargement</dt> <dd><a :href="file.get_url">{{file.get_url}}</a></dd>
+      </ul>
+      <h3>Liste des téléchargements</h3>
+      <table>
+        <tr>
+            <th>Adresse</th>
+            <th>Date</th>
+            <th>Annulé</th>
+        </tr>
+        <tr v-for="download in file.downloads">
+            <td>{{download.ip}}</td>
+            <td>{{download.timestamp | dateToLocaleString}}</td>
+            <td>{{download.bytes !== file.size ? 'Oui' : 'Non'}}</td>
+        </tr>
+    </table>
+    </div>
+ </div>
 
-</body>
-</html>
+ <script src="manage-file.js"></script>

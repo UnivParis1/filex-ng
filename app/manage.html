@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FileX</title>
-  <link href="lib.css" type="text/css" rel="stylesheet">
-  <link href="filex.css" type="text/css" rel="stylesheet">
-</head>
-<body>
-<script> window.prolongation_ENT_args = { current: "CFilex", layout_url: "/EsupUserApps/layout" }; </script>
-<script type="text/javascript" src="https://ent.univ-paris1.fr/ProlongationENT/loader.js"></script>
-      
+
 <div id="main" v-cloak>
   <div v-if="!files">
       Chargement en cours, veuillez patienter...
@@ -35,7 +23,7 @@
             <th>Téléchargé</th>
         </tr>
         <tr v-for="file in files">
-            <td><a :href="'/manage-file.html#' + file._id" :class="{ is_deleted: file.deleted }">{{file.filename}}</a></td>
+            <td><a :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">{{file.filename}}</a></td>
             <td>{{file.size | formatBytes(2)}}</td>
             <td>{{file.uploadTimestamp | dateToLocaleString}}</td>
             <td>{{file.expireAt | dateToLocaleString}}</td>
@@ -44,10 +32,4 @@
     </table>
   </div>
 </div>
-
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="common.js"></script>
 <script src="manage.js"></script>
-
-</body>
-</html>
