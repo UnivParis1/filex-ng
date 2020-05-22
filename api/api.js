@@ -111,7 +111,8 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
         `<meta http-equiv="refresh" content="5; URL=${get_url(file_id)}&auto=1">`
     ) + `
         <title>FileX</title>
-        <link href="../filex.css" type="text/css" rel="stylesheet">
+        <link href="lib.css" type="text/css" rel="stylesheet">
+        <link href="filex.css" type="text/css" rel="stylesheet">
     </head>
     <body>
     <script> 
