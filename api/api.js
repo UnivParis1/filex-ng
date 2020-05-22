@@ -4,8 +4,9 @@ const conf = require('../conf')
 const db = require('./db')
 const mail = require('./mail');
 const helpers = require('./helpers');
+const html_template = require('./html_template')
 
-const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
+const get_url = html_template.get_url
 
 const get_file = (file_id) => conf.upload_dir + '/' + file_id
 

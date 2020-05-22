@@ -2,8 +2,7 @@ const _ = require('lodash')
 const nodemailer = require('nodemailer')
 const helpers = require('./helpers')
 const conf = require('../conf')
-
-const get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
+const get_url = require('./html_template').get_url
 
 const mailTransporter = nodemailer.createTransport(conf.mail.transport)
 
