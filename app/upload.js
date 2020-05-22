@@ -1,10 +1,11 @@
+const daykeep_opts = [1,2,3,4,5,6,7,14,15,21,30,45];
+
 new Vue({
     created() {
         this.get_user_info()
     },
     data: {
         upload: {
-            daykeep_opts: [1,2,3,4,5,6,7,14,15,21,30,45],
             daykeep: 15,
             download_ack: false, summary: false, with_password: false,
             password: undefined,
@@ -22,6 +23,10 @@ new Vue({
     computed: {
         expiration() {
             return addDays(new Date(), this.upload.daykeep).toLocaleString();
+        },
+        daykeep_opts() {
+            var max_daykeep = this.info && this.info.max_daykeep;
+            return max_daykeep && daykeep_opts.filter(function (daykeep) { return daykeep <= max_daykeep })
         },
     },
     methods: {
