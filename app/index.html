@@ -63,6 +63,7 @@
         <button @click="upload_abort">Annuler</button>
     </div>
 
+   <div v-if="info.files_summary_by_deleted.false.count || info.files_summary_by_deleted.true.count">
     <h3>Vos fichiers</h3>
 
     <p>Vous avez {{info.files_summary_by_deleted.false.count}} fichiers encore valides.</p>
@@ -70,7 +71,8 @@
     <p>Espace Utilisé : {{info.files_summary_by_deleted.false.total_size | formatBytes(2)}} / {{info.quota | formatBytes(2)}}</p>
 
     <p><a href="/manage">Gérer mes fichiers</a></p>
-
+   </div>
+   
     <h3>Conditions d'utilisation du service</h3>
     <ul>
         <li>En mettant à disposition des fichiers, son propriétaire devient responsable de leur diffusion.</li>

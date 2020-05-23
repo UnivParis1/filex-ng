@@ -15,7 +15,10 @@ const get_user_info = async (user) => {
     let info = {
         quota: conf.user_default.quota,
         max_daykeep: conf.user_default.max_daykeep,
-        files_summary_by_deleted: await db.files_summary_by_deleted(user),
+        files_summary_by_deleted: _.merge({ 
+            false: { total_size: 0, count: 0 },
+            true: { total_size: 0, count: 0 },
+        }, await db.files_summary_by_deleted(user)),
     }
     info.remaining_quota = info.quota - info.files_summary_by_deleted.false.total_size
     return info
