@@ -55,7 +55,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     const out = fs.createWriteStream(file)
     try {
         await helpers.promise_WriteStream_pipe(req, out)
-        const size = (await helpers.fs_stat(file)).size
+        const size = (await helpers.fsP.stat(file)).size
         if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
         const doc = { 
             _id: file_id, 
@@ -129,7 +129,7 @@ exports.remove_expired = async function() {
     for (const doc of (await db.files_to_delete())) {
         console.log("removing expired", doc)
         try {
-            await helpers.fs_unlink(get_file(doc._id))
+            await helpers.fsP.unlink(get_file(doc._id))
             await db.set_deleted(doc)
         } catch (err) {
             if (err.code === 'ENOENT') {

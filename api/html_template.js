@@ -27,7 +27,7 @@ const end = `
 
 exports.static = async (req, res) => {
     const template_filename = __dirname + '/../app' + (req.path === '/' ? '/index.html' : req.path + ".html")
-    let html = await helpers.fs_readFile(template_filename)
+    let html = await helpers.fsP.readFile(template_filename)
     res.set('Content-Type', 'text/html');
     res.end(beginning('') + base_js_files + html + end)
 }
