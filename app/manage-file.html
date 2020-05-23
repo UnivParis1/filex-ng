@@ -3,9 +3,9 @@
       Chargement en cours, veuillez patienter...
   </div>
   <div v-else>
-      <h2>Fichier {{file.filename}}</h2>
+      <h2>Fichier « {{file.filename}} »</h2>
 
-      <button @click="delete_file" v-if="!file.deleted">Supprimer</button>
+      <button @click="delete_file" v-if="!file.deleted">Supprimer ce fichier</button>
       <dl>
       <dt>Déposé le</dt><dd>{{file.uploadTimestamp | dateToLocaleString}}</dd>
       <dt>Expire le</dt> <dd>{{file.expireAt | dateToLocaleString}}</dd>
