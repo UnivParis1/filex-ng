@@ -4,28 +4,15 @@ const conf = require('../conf')
 const db = require('./db')
 const mail = require('./mail');
 const helpers = require('./helpers');
+const various = require('./various');
 const html_template = require('./html_template')
 
-const get_url = html_template.get_url
 
-const get_file = (file_id) => conf.upload_dir + '/' + file_id
-
-const get_user_info = async (user) => {
-    if (!user) throw "need relog"
-    let info = {
-        quota: conf.user_default.quota,
-        max_daykeep: conf.user_default.max_daykeep,
-        files_summary_by_deleted: _.merge({ 
-            false: { total_size: 0, count: 0 },
-            true: { total_size: 0, count: 0 },
-        }, await db.files_summary_by_deleted(user)),
-    }
-    info.remaining_quota = info.quota - info.files_summary_by_deleted.false.total_size
-    return info
-}
+const get_url = various.get_url
+const get_file = various.get_file
 
 exports.user_info = helpers.express_async(async (req, res) => {
-    res.json(await get_user_info(req.session.user))
+    res.json(await various.get_user_info(req.session.user))
 })
 
 const add_downloadCount = async (docs) => {
@@ -46,7 +33,7 @@ exports.user_file = helpers.express_async(async (req, res) => {
 })
 
 exports.handle_upload = helpers.express_async(async (req, res) => {
-    const user_info = await get_user_info(req.session.user)
+    const user_info = await various.get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {
         throw "invalid daykeep";
     }
@@ -123,25 +110,3 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
         html_template.get__before_download(req.query, doc, res)
     }
 })
-
-const delete_file = async (doc) => {
-    await helpers.fsP.unlink(get_file(doc._id))
-    await db.set_deleted(doc)
-}
-
-exports.remove_expired = async function() {
-    console.log("checking expired files to remove")
-    for (const doc of (await db.files_to_delete())) {
-        console.log("removing expired", doc)
-        try {
-            await delete_file(doc)
-        } catch (err) {
-            if (err.code === 'ENOENT') {
-                console.error("file already deleted? marking it deleted")
-                await db.set_deleted(doc)
-            } else {
-                console.error("keeping file non deleted, hopefully the error will go away??", err)
-            }
-        }
-    }
-}

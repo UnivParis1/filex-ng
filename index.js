@@ -6,6 +6,7 @@ const conf = require('./conf')
 const shib = require('./api/shib')
 const api = require('./api/api')
 const helpers = require('./api/helpers')
+const various = require('./api/various')
 const html_template = require('./api/html_template')
 
 
@@ -36,5 +37,5 @@ app.use(express.static(__dirname + '/app'))
 
 app.listen(conf.port)
 
-api.remove_expired()
-setInterval(api.remove_expired, helpers.minutes_to_ms(5))
+various.remove_expired()
+setInterval(various.remove_expired, helpers.minutes_to_ms(5))
