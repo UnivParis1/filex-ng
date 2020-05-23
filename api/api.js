@@ -77,7 +77,7 @@ const log_download = async (req, doc, bytes) => {
     await db.insert_download(log)
 }
 
-exports.handle_download = helpers.express_async(async (req, res, next) => {
+exports.handle_download = helpers.express_async(async (req, res) => {
     const file_id = req.query.id
     if (!file_id) {
         throw "missing id parameter"
