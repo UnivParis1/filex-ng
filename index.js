@@ -27,6 +27,7 @@ app.post('/user/upload', api.handle_upload)
 app.get('/user/info', api.user_info)
 app.get('/user/files', api.user_files)
 app.get('/user/file/:id', api.user_file)
+app.delete('/user/file/:id', api.delete_user_file)
 
 app.get('/get', api.handle_download) 
   

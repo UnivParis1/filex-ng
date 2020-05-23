@@ -11,6 +11,12 @@ new Vue({
     computed: {
     },
     methods: {
+        delete_file() {
+            call_xhr('DELETE', '/user/file/' + this.file._id, null).then(function () {
+                alert("Fichier supprimé");
+                document.location.href = "/manage";
+            });
+        },
     },
     filters: {
         formatBytes: formatBytes,

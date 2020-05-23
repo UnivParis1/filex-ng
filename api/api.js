@@ -32,6 +32,12 @@ exports.user_file = helpers.express_async(async (req, res) => {
     res.json(file)
 })
 
+exports.delete_user_file = helpers.express_async(async (req, res) => {
+    const doc = await db.user_file(req.session.user, req.params.id)
+    await various.delete_file(doc, { force: true })
+    res.json({ ok: true })
+})
+
 exports.handle_upload = helpers.express_async(async (req, res) => {
     const user_info = await various.get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {

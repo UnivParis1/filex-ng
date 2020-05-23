@@ -32,8 +32,7 @@ exports.log_download = async (req, doc, bytes) => {
     await db.insert_download(log)
 }
 
-
-const delete_file = async (doc, opts) => {
+const delete_file = exports.delete_file = async (doc, opts) => {
     try {
         await helpers.fsP.unlink(get_file(doc._id))
         await db.set_deleted(doc)
