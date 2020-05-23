@@ -67,7 +67,7 @@ exports.express_async = (fn) => (
         Promise.resolve(fn(req, res, next)).catch(err => {
             console.error("ERROR", err)
             // try to send the error if possible
-            try { res.send(err) } catch (_) {}
+            try { res.status(500).json({ ok: false, err }) } catch (_) {}
         })
     )
 )

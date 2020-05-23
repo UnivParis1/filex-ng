@@ -27,6 +27,7 @@ exports.user_files = helpers.express_async(async (req, res) => {
 
 exports.user_file = helpers.express_async(async (req, res) => {
     const file = await db.user_file(req.session.user, req.params.id)
+    if (!file) throw "invalid id"
     file.downloads = await db.file_downloads(file._id)
     file.get_url = get_url(file._id)
     res.json(file)
@@ -68,7 +69,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
         res.json({ ok: true, get_url: get_url(file_id) })    
     } catch (err) {
         fs.unlink(file, _ => {})
-        res.status(500).json({ ok: false, err })
+        throw err;
     }
 })
 

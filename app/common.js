@@ -56,7 +56,7 @@ function format_remaining_time(seconds) {
     return Math.round(minutes) + "m";
 }
 
-function call_xhr(method, url, body, prepare_xhr) {
+function call_xhr_raw(method, url, body, prepare_xhr) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         if (prepare_xhr) prepare_xhr(xhr);
@@ -67,5 +67,12 @@ function call_xhr(method, url, body, prepare_xhr) {
         };
         xhr.open(method, url, true);
         xhr.send(body);
+    })
+}
+
+function call_xhr(method, url, body, prepare_xhr) {
+    return call_xhr_raw(method, url, body, prepare_xhr).catch(function (resp) {
+        alert(resp && resp.err || resp);
+        throw resp;
     })
 }

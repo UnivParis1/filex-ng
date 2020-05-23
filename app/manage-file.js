@@ -3,6 +3,8 @@ new Vue({
         var that = this;
         call_xhr('GET', '/user/file/' + document.location.hash.replace(/^#/, ''), null).then(function (file) {
             that.file = file;
+        }).catch(function (_resp) {
+            document.location.href = "/manage";
         })
     },
     data: {
