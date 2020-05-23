@@ -33,24 +33,24 @@ exports.log_download = async (req, doc, bytes) => {
 }
 
 
-const delete_file = async (doc) => {
-    await helpers.fsP.unlink(get_file(doc._id))
-    await db.set_deleted(doc)
+const delete_file = async (doc, opts) => {
+    try {
+        await helpers.fsP.unlink(get_file(doc._id))
+        await db.set_deleted(doc)
+    } catch (err) {
+        if (err.code === 'ENOENT' && opts.force) {
+            console.error("file already deleted? marking it deleted")
+            await db.set_deleted(doc)
+        } else {
+            console.error("keeping file non deleted, hopefully the error will go away??", err)
+        }
+    }
 }
 
 exports.remove_expired = async function() {
     console.log("checking expired files to remove")
     for (const doc of (await db.files_to_delete())) {
         console.log("removing expired", doc)
-        try {
-            await delete_file(doc)
-        } catch (err) {
-            if (err.code === 'ENOENT') {
-                console.error("file already deleted? marking it deleted")
-                await db.set_deleted(doc)
-            } else {
-                console.error("keeping file non deleted, hopefully the error will go away??", err)
-            }
-        }
+        delete_file(doc, { force: true })
     }
 }
