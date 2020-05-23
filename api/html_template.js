@@ -1,8 +1,8 @@
 const helpers = require('./helpers')
-const various = require('./various')
+const conf = require('../conf')
 
 
-const get_url = various.get_url
+const get_url = exports.get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 
 const beginning = (more_meta) => `<!DOCTYPE html>
 <html lang="fr">

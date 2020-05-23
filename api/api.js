@@ -8,7 +8,7 @@ const various = require('./various');
 const html_template = require('./html_template')
 
 
-const get_url = various.get_url
+const get_url = html_template.get_url
 const get_file = various.get_file
 
 exports.user_info = helpers.express_async(async (req, res) => {

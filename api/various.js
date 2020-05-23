@@ -4,7 +4,6 @@ const db = require('./db')
 const helpers = require('./helpers');
 
 
-exports.get_url = (file_id) => `https://${conf.our_vhost}/get?id=${file_id}`
 const get_file = exports.get_file = (file_id) => conf.upload_dir + '/' + file_id
 
 exports.get_user_info = async (user) => {
