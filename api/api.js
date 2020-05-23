@@ -124,13 +124,17 @@ exports.handle_download = helpers.express_async(async (req, res, next) => {
     }
 })
 
+const delete_file = async (doc) => {
+    await helpers.fsP.unlink(get_file(doc._id))
+    await db.set_deleted(doc)
+}
+
 exports.remove_expired = async function() {
     console.log("checking expired files to remove")
     for (const doc of (await db.files_to_delete())) {
         console.log("removing expired", doc)
         try {
-            await helpers.fsP.unlink(get_file(doc._id))
-            await db.set_deleted(doc)
+            await delete_file(doc)
         } catch (err) {
             if (err.code === 'ENOENT') {
                 console.error("file already deleted? marking it deleted")
