@@ -66,17 +66,6 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     }
 })
 
-const log_download = async (req, doc, bytes) => {
-    const log = { 
-        doc: doc._id,
-        bytes,
-        timestamp: helpers.now(),
-        ip: conf.request_to_ip(req),
-        user_agent: req.headers['user-agent'],
-    }
-    await db.insert_download(log)
-}
-
 exports.handle_download = helpers.express_async(async (req, res) => {
     const file_id = req.query.id
     if (!file_id) {
@@ -104,7 +93,7 @@ exports.handle_download = helpers.express_async(async (req, res) => {
             return res;
           })
         } finally {
-            log_download(req, doc, input.bytesRead);
+            various.log_download(req, doc, input.bytesRead);
         }
     } else {
         html_template.get__before_download(req.query, doc, res)

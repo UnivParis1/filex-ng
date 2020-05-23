@@ -21,6 +21,18 @@ exports.get_user_info = async (user) => {
     return info
 }
 
+exports.log_download = async (req, doc, bytes) => {
+    const log = { 
+        doc: doc._id,
+        bytes,
+        timestamp: helpers.now(),
+        ip: conf.request_to_ip(req),
+        user_agent: req.headers['user-agent'],
+    }
+    await db.insert_download(log)
+}
+
+
 const delete_file = async (doc) => {
     await helpers.fsP.unlink(get_file(doc._id))
     await db.set_deleted(doc)
