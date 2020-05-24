@@ -43,7 +43,7 @@ const delete_file = exports.delete_file = async (doc, opts) => {
             return
         }
     }
-    await db.set_deleted(doc)
+    await db.set(doc, { deleted: true })
     if (doc.notify_on_delete) {
         await mail.notify_on_delete(doc, await db.file_downloads(doc._id))
     }

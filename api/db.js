@@ -37,8 +37,8 @@ exports.insert_download = async (log) => (
     (await collection('downloads')).insertOne(log)
 )
 
-exports.set_deleted = async (doc) => (
-    (await collection('uploads')).updateOne({ _id: doc._id }, { $set: { deleted: true } })
+exports.set = async (doc, subdoc) => (
+    (await collection('uploads')).updateOne({ _id: doc._id }, { $set: subdoc })
 )
 
 exports.files_to_delete = async () => (
