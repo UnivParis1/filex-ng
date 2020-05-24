@@ -2,6 +2,7 @@ const _ = require('lodash')
 const conf = require('../conf')
 const db = require('./db')
 const helpers = require('./helpers');
+const mail = require('./mail');
 
 
 const get_file = exports.get_file = (file_id) => conf.upload_dir + '/' + file_id
@@ -43,6 +44,9 @@ const delete_file = exports.delete_file = async (doc, opts) => {
         }
     }
     await db.set_deleted(doc)
+    if (doc.summary) {
+        await mail.notify_on_delete(doc, await db.file_downloads(doc._id))
+    }
 }
 
 exports.remove_expired = async function() {

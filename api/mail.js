@@ -74,3 +74,25 @@ Merci d'avoir utilisé le service d'échange de fichier.
 `
     send({ to: doc.uploader.mail, subject, text })
 }
+
+exports.notify_on_delete = (doc, downloads) => {
+    const subject = `Système de transfert de fichier : ${doc.filename} supprimé`
+    const downloads_txt = downloads.map(download => (
+        `- ${download.ip} le ${helpers.format_date(download.timestamp)}\n`
+    )).join('')
+    const text = `Votre fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été supprimé.
+
+Nombre de téléchargements : ${downloads.length}
+
+` + (downloads_txt ? `Téléchargé par :
+${downloads_txt}
+
+` : '') + `Pour informations :
+
+${doc_info(doc)}
+
+
+Merci d'avoir utilisé le service d'échange de fichier.
+`
+    send({ to: doc.uploader.mail, subject, text })
+}

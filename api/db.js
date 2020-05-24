@@ -67,7 +67,6 @@ exports.user_files = async (user, include_deleted) => (
 exports.user_file = async (user, id) => (
     (await collection('uploads')).find(
         { "uploader.eppn": user.eppn, _id: _id(id) },
-        { projection: { uploader: 0 } },
     ).limit(1).next()
 )
 
