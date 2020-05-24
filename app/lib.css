@@ -11,3 +11,4 @@ button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-mo
 button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring { outline: 1px dotted ButtonText; }
 ::-webkit-file-upload-button { -webkit-appearance: button; font: inherit; } 
 
+input[type="checkbox"] { vertical-align: text-bottom; }
