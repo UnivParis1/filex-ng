@@ -34,7 +34,7 @@ Disponible jusqu'au : ${helpers.format_date(doc.expireAt)}`
 )
 
 exports.notify_on_upload = (doc) => {
-    const subject = `Système de transfert de fichier : ${doc.filename}`
+    const subject = `Système de transfert de fichier : ${doc.filename} déposé`
     const text = `Vous venez de déposer le fichier : ${doc.filename}
 
 Ce fichier sera disponible jusqu'au : ${helpers.format_date(doc.expireAt)}
@@ -61,7 +61,7 @@ Merci d'avoir utilisé le service d'échange de fichier.
 exports.notify_on_download = async (req, doc) => {
     const client_ip = conf.request_to_ip(req)
     const client_host = await helpers.dns_reverse(client_ip).catch(_ => "")
-    const subject = `Votre fichier ${doc.filename} a été téléchargé`
+    const subject = `Système de transfert de fichier : ${doc.filename} téléchargé`
     const text = `Le fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été téléchargé.
 
 Pour informations :
