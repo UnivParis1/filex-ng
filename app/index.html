@@ -64,7 +64,7 @@
    <div v-if="info.files_summary_by_deleted.false.count || info.files_summary_by_deleted.true.count">
     <h3>Vos fichiers</h3>
 
-    <p>Vous avez {{info.files_summary_by_deleted.false.count}} fichiers encore valides.</p>
+    <p>Vous avez {{info.files_summary_by_deleted.false.count}} fichiers.</p>
 
     <p>Espace Utilisé : {{info.files_summary_by_deleted.false.total_size | formatBytes(2)}} / {{info.quota | formatBytes(2)}}</p>
 
