@@ -50,8 +50,8 @@ ${doc_info(doc)}
 
 Options :
 
-- Recevoir un avis de réception à chaque téléchargement : ${doc.download_ack ? "oui" : "non"}
-- Recevoir un récapitulatif des téléchargement lorsque le fichier aura expiré : ${doc.summary ? "oui" : "non"}
+- Recevoir un avis de réception à chaque téléchargement : ${doc.notify_on_download ? "oui" : "non"}
+- Recevoir un récapitulatif des téléchargement lorsque le fichier aura expiré : ${doc.notify_on_delete ? "oui" : "non"}
 
 Merci d'avoir utilisé le service d'échange de fichier.
 `

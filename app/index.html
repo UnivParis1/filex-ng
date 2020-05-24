@@ -34,8 +34,8 @@
                 {{nb}}
               </option>
         </select> Jours</p>
-        <p><label><input type="checkbox" v-model="upload.download_ack">Recevoir un avis de réception à chaque téléchargement</label></p>
-        <p><label><input type="checkbox" v-model="upload.summary">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
+        <p><label><input type="checkbox" v-model="upload.notify_on_download">Recevoir un avis de réception à chaque téléchargement</label></p>
+        <p><label><input type="checkbox" v-model="upload.notify_on_delete">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
         <p><label><input type="checkbox" v-model="upload.with_password">Utiliser un mot de passe pour le téléchargement</label>
             <span v-if="upload.with_password">:
               <input type="password" v-model="upload.password" size="15" maxlength="30"><br>

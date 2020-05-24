@@ -54,7 +54,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
         const doc = { 
             _id: file_id, 
             size, 
-            ..._.pick(req.query, 'filename', 'type', 'download_ack', 'summary', 'password'),
+            ..._.pick(req.query, 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password'),
 
             uploadTimestamp: helpers.now(),
             expireAt: helpers.addDays(helpers.now(), req.query.daykeep),
@@ -88,7 +88,7 @@ exports.handle_download = helpers.express_async(async (req, res) => {
         const input = fs.createReadStream(get_file(file_id))
         try {
           await helpers.promise_ReadStream_pipe(input, () => {
-            if (doc.download_ack) {
+            if (doc.notify_on_download) {
                 mail.notify_on_download(req, doc) // do not wait for it to return
             }
             _.each({

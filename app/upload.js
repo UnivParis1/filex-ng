@@ -7,7 +7,7 @@ new Vue({
     data: {
         upload: {
             daykeep: 15,
-            download_ack: false, summary: false, with_password: false,
+            notify_on_download: false, notify_on_delete: false, with_password: false,
             password: undefined,
             file: undefined,
         },
@@ -44,8 +44,8 @@ new Vue({
                 'filename': file.name,                
                 'type': file.type,
                 'daykeep': this.upload.daykeep,
-                'download_ack': this.upload.download_ack,
-                'summary': this.upload.summary,
+                'notify_on_download': this.upload.notify_on_download,
+                'notify_on_delete': this.upload.notify_on_delete,
                 'password': this.upload.with_password && this.upload.password,
             };
             call_xhr('POST', '/user/upload?' + encode_params(params), file, function (xhr) {
