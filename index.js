@@ -28,6 +28,7 @@ app.get('/user/info', api.user_info)
 app.get('/user/files', api.user_files)
 app.get('/user/file/:id', api.user_file)
 app.delete('/user/file/:id', api.delete_user_file)
+app.post('/user/file/:id', api.modify_user_file)
 
 app.get('/get', api.handle_download) 
   

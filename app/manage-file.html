@@ -9,7 +9,9 @@
       <button @click="delete_file" v-else>Supprimer ce fichier</button>
       <dl>
       <dt>Déposé le</dt><dd>{{file.uploadTimestamp | dateToLocaleString}}</dd>
-      <dt>Expire le</dt> <dd>{{file.expireAt | dateToLocaleString}}</dd>
+      <dt>Expire le</dt><dd>{{file.expireAt | dateToLocaleString}}
+        <br><button @click="extend_lifetime">Prolonger</button>
+      </dd>
       <dt>Taille</dt> <dd>{{file.size | formatBytes(2)}}</dd>
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
       <dt>Adresse de téléchargement</dt> <dd><a :href="file.get_url">{{file.get_url}}</a></dd>
