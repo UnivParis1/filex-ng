@@ -35,21 +35,25 @@ const get_attrs = (Cookie) => (new Promise((resolve, reject) => {
     })
 }))
 
-exports.ensure_connected = async (req, res, next) => {
+exports.may_create_session = async (req, res, next) => {
     if (!req.session.user) {
         try {
             req.session.user = await get_attrs(req.headers.cookie)
+            //console.log("created session", req.session.user)
         } catch (err) {
             console.log("shib.get_attrs failed:", err)
         }
-        if (!req.session.user) {
-            //console.log("no shib session, redirecting")
-            res.redirect('/Shibboleth.sso/Login')
-            return
-        }
-        //console.log("created session", req.session.user)
     } else {
         //console.log("existing session", req.session.user)
+    }
+    next()
+}
+
+exports.ensure_connected = async (req, res, next) => {
+    if (!req.session.user) {
+        //console.log("no shib session, redirecting")
+        res.redirect('/Shibboleth.sso/Login')
+        return
     }
     next()
 }

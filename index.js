@@ -21,7 +21,7 @@ const require_session = (req, res, next) => {
     next()
 }
 
-app.use('/user', get_session, require_session)
+app.use('/user', get_session, shib.may_create_session, require_session)
 app.put('/user/upload', api.handle_upload)
 app.post('/user/upload', api.handle_upload)
 app.get('/user/info', api.user_info)
@@ -31,7 +31,7 @@ app.delete('/user/file/:id', api.delete_user_file)
 
 app.get('/get', api.handle_download) 
   
-app.get([/^\/$/, '/manage', '/manage-file'], get_session, shib.ensure_connected, html_template.static)
+app.get([/^\/$/, '/manage', '/manage-file'], get_session, shib.may_create_session, shib.ensure_connected, html_template.static)
 
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))
