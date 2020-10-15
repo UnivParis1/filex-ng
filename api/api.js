@@ -52,6 +52,21 @@ exports.modify_user_file = helpers.express_async(async (req, res) => {
     res.json({ ok: true })
 })
 
+const _create_doc = async (req, params) => {
+    const doc = { 
+        ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password', 'uploader'),
+
+        uploadTimestamp: helpers.now(),
+        expireAt: helpers.addDays(helpers.now(), params.daykeep),
+        deleted: false,
+        
+        ip: conf.request_to_ip(req),
+        user_agent: req.headers['user-agent'],
+    }
+    await db.insert_upload(doc)
+    return doc
+}
+
 const _body_to_file = async (req, file_id) => {
     const file = get_file(file_id)
     const out = fs.createWriteStream(file)
@@ -73,20 +88,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     const file_id = db.new_id()
     const size = await _body_to_file(req, file_id)
     if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
-    const doc = { 
-        _id: file_id, 
-        size, 
-        ..._.pick(req.query, 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password'),
-
-        uploadTimestamp: helpers.now(),
-        expireAt: helpers.addDays(helpers.now(), req.query.daykeep),
-        deleted: false,
-        
-        uploader: req.session.user,
-        ip: conf.request_to_ip(req),
-        user_agent: req.headers['user-agent'],
-    }
-    await db.insert_upload(doc)
+    const doc = await _create_doc(req, { ...req.query, size, uploader: req.session.user, _id: file_id })
     mail.notify_on_upload(doc) // do not wait for it to return
     res.json({ ok: true, get_url: get_url(file_id) })    
 })
