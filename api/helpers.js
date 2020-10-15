@@ -2,8 +2,10 @@
 const fs = require('fs')
 const dns = require('dns')
 const util = require('util')
+const formidable = require('formidable')
 
 exports.fsP = {
+    copyFile: util.promisify(fs.copyFile),
     stat: util.promisify(fs.stat),
     unlink: util.promisify(fs.unlink),
     readFile: util.promisify(fs.readFile),
@@ -107,3 +109,14 @@ exports.promise_ReadStream_pipe = (readStream, prepare_response) => (
     })
 )
 
+exports.form_parse = (req, options) => (
+    new Promise((resolve, reject) => {
+        formidable(options).parse(req, (err, fields, files) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({ fields, files })
+            }
+        })
+    })
+)

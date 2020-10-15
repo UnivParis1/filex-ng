@@ -20,6 +20,26 @@ const require_session = (req, res, next) => {
     if (!req.session.user) throw "need relog"
     next()
 }
+const _is_trusted = (req) => {
+    const bearer = ((req.headers.authorization || '').match(/^Bearer (.*)/) || [])[1]
+    if (bearer && conf.trusted.bearer_tokens.includes(bearer)) {
+        return true;
+    }
+    const ip = conf.request_to_ip(req);
+    if (conf.trusted.IPs.includes(ip)) {
+        return true;
+    }
+    if (bearer) console.info(bearer + " is not in trusted.bearer_tokens for trusted upload")
+    console.info(ip + " is not in trusted.IPs for trusted upload")
+    return false;
+}
+const require_trusted = (req, res, next) => {
+    if (_is_trusted(req)) {
+        next();
+    } else {
+        res.status(403).json({ ok: false, err: "no valid 'Authorization Bearer' or IP not authorized (see conf.trusted)" })
+    }
+}
 
 app.use('/user', get_session, shib.may_create_session, require_session)
 app.put('/user/upload', api.handle_upload)
@@ -29,6 +49,10 @@ app.get('/user/files', api.user_files)
 app.get('/user/file/:id', api.user_file)
 app.delete('/user/file/:id', api.delete_user_file)
 app.post('/user/file/:id', api.modify_user_file)
+
+app.use('/trusted', require_trusted)
+app.put('/trusted/upload', api.handle_trusted_upload)
+app.post('/trusted/upload', api.handle_trusted_upload)
 
 app.get('/get', api.handle_download) 
   

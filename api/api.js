@@ -80,6 +80,16 @@ const _body_to_file = async (req, file_id) => {
     }
 }
 
+const _upload_response = (req, res, doc, prefer_json) => {
+    const accept = req.headers.accept || ''
+    if (accept.match(/^application\/json/) ||
+        prefer_json && !accept.match(/^text/)) {
+        res.json({ ok: true, get_url: get_url(doc._id) })    
+    } else {
+        res.send(get_url(doc._id))
+    }
+}
+
 exports.handle_upload = helpers.express_async(async (req, res) => {
     const user_info = await various.get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {
@@ -90,7 +100,36 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
     const doc = await _create_doc(req, { ...req.query, size, uploader: req.session.user, _id: file_id })
     mail.notify_on_upload(doc) // do not wait for it to return
-    res.json({ ok: true, get_url: get_url(file_id) })    
+    _upload_response(req, res, doc, true)
+})
+
+exports.handle_trusted_upload = helpers.express_async(async (req, res) => {
+    const file_id = db.new_id()
+    let params;
+    if (/^multipart[/]form-data/i.test(req.headers['content-type'])) {
+        const { fields, files } = await helpers.form_parse(req)
+        if (!files.upload) throw "invalid form trusted upload: expected file named 'upload'";
+        if (!fields.owner) throw "missing 'owner' parameter"
+
+        const { path, name, type, size } = files.upload
+
+        await helpers.fsP.copyFile(path, get_file(file_id));
+
+        // cleanup
+        _.each(files, file => helpers.fsP.unlink(file.path))
+
+        params = { ...fields, filename: name, type, size }
+        console.log(params)
+    } else {
+        if (!req.query.owner) throw "missing 'owner' parameter"
+        if (!req.query.type) throw "missing 'type' parameter"
+        const size = await _body_to_file(req, file_id)
+        params = { ...req.query, size }
+    }
+    const uploader = { eppn: params.owner, mail: params.mail || params.owner }
+    const doc = await _create_doc(req, { ...params, _id: file_id, uploader })
+    console.log(doc)
+    _upload_response(req, res, doc, false)
 })
 
 exports.handle_download = helpers.express_async(async (req, res) => {

@@ -32,6 +32,11 @@ let conf = {
     },
 
     request_to_ip: req => req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+
+    trusted: {
+        bearer_tokens: [],
+        IPs: [],
+    },
 };
 
 module.exports = conf;
