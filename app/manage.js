@@ -2,10 +2,10 @@ new Vue({
     created() {
         this.get_files();
     },
-    data: {
+    data: () => ({
         files: undefined,
         hide_deleted: true,
-    },
+    }),
     watch: {
         hide_deleted: 'get_files',
     },
@@ -21,8 +21,6 @@ new Vue({
                 that.files = files;
             })    
         },
-    },
-    filters: {
         formatBytes: formatBytes,
         dateToLocaleString: function (o) { return new Date(o).toLocaleString() },
     },

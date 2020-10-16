@@ -8,11 +8,11 @@
       <span class="notes" v-if="file.deleted">Fichier supprimé</span>
       <button @click="delete_file" v-else>Supprimer ce fichier</button>
       <dl>
-      <dt>Déposé le</dt><dd>{{file.uploadTimestamp | dateToLocaleString}}</dd>
-      <dt>Expire le</dt><dd>{{file.expireAt | dateToLocaleString}}
+      <dt>Déposé le</dt><dd>{{dateToLocaleString(file.uploadTimestamp)}}</dd>
+      <dt>Expire le</dt><dd>{{dateToLocaleString(file.expireAt)}}
         <br><button @click="extend_lifetime">Prolonger</button>
       </dd>
-      <dt>Taille</dt> <dd>{{file.size | formatBytes(2)}}</dd>
+      <dt>Taille</dt> <dd>{{formatBytes(file.size, 2)}}</dd>
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
       <dt>Adresse de téléchargement</dt> <dd><a :href="file.get_url">{{file.get_url}}</a></dd>
       </dl>
@@ -26,7 +26,7 @@
             </tr>
             <tr v-for="download in file.downloads">
                 <td>{{download.ip}}</td>
-                <td>{{download.timestamp | dateToLocaleString}}</td>
+                <td>{{dateToLocaleString(download.timestamp)}}</td>
                 <td>{{download.bytes !== file.size ? 'Oui' : 'Non'}}</td>
             </tr>
         </table>

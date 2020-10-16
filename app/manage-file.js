@@ -2,9 +2,9 @@ new Vue({
     created() {
         this.get_file(document.location.hash.replace(/^#/, ''))
     },
-    data: {
+    data: () => ({
             file: undefined,
-    },
+    }),
     computed: {
     },
     methods: {
@@ -28,8 +28,6 @@ new Vue({
                 that.get_file(that.file._id)
             });
         },
-    },
-    filters: {
         formatBytes: formatBytes,
         dateToLocaleString: function (o) { return new Date(o).toLocaleString() },
     },

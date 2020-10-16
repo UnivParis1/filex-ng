@@ -14,7 +14,7 @@
     <div style="margin-top: 2rem">
      <i>Informations</i> :
      <ul>
-      <li> Taille : {{uploaded.size | formatBytes(2)}}</li>
+      <li> Taille : {{formatBytes(uploaded.size, 2)}}</li>
       <li> Disponible jusqu'au : {{expiration}}</li>
       </ul>
     </div>
@@ -25,7 +25,7 @@
   </div>
   <div v-else>
 
-    <h2>Cette application permet d'envoyer de gros fichiers (il vous reste {{info.remaining_quota | formatBytes(2)}}).</h2>
+    <h2>Cette application permet d'envoyer de gros fichiers (il vous reste {{formatBytes(info.remaining_quota, 2)}}).</h2>
 
     <form>
 
@@ -66,7 +66,7 @@
 
     <p>Vous avez {{info.files_summary_by_deleted.false.count}} fichiers.</p>
 
-    <p>Espace Utilisé : {{info.files_summary_by_deleted.false.total_size | formatBytes(2)}} / {{info.quota | formatBytes(2)}}</p>
+    <p>Espace Utilisé : {{formatBytes(info.files_summary_by_deleted.false.total_size, 2)}} / {{formatBytes(info.quota, 2)}}</p>
 
     <p><a href="/manage">Gérer mes fichiers</a></p>
    </div>

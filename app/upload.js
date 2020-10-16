@@ -4,7 +4,7 @@ new Vue({
     created() {
         this.get_user_info()
     },
-    data: {
+    data: () => ({
         upload: {
             daykeep: 15,
             notify_on_download: false, notify_on_delete: false, with_password: false,
@@ -19,7 +19,7 @@ new Vue({
             file_name: undefined, file_size: undefined,
         },
         info: undefined,
-    },
+    }),
     computed: {
         expiration() {
             return addDays(new Date(), this.upload.daykeep).toLocaleString();
@@ -80,9 +80,7 @@ new Vue({
         back_to_upload_choice() {
             this.uploaded.get_url = undefined
             this.get_user_info() // update it
-        }
-    },
-    filters: {
+        },
         formatBytes: formatBytes,
     },
 }).$mount("#main");

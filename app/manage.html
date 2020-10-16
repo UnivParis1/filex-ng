@@ -6,7 +6,7 @@
   <div v-else>
     <h2>Vos {{files.length}} fichiers<span v-if="hide_deleted"> non expirés</span></h2>
 
-    <div style="float: right">Espace Utilisé : {{files_size | formatBytes(2)}}
+    <div style="float: right">Espace Utilisé : {{formatBytes(files_size, 2)}}
         <p></p>
         <button @click="hide_deleted = !hide_deleted">
             <span v-if="hide_deleted">Montrer les fichiers expirés</span>
@@ -26,7 +26,7 @@
             <td><a :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">
                 <span v-if="file.filename">{{file.filename}}</span><i v-else>aucun nom</i>
             </a></td>
-            <td>{{file.size | formatBytes(2)}}</td>
+            <td>{{formatBytes(file.size, 2)}}</td>
             <td>{{file.uploadTimestamp | dateToLocaleString}}</td>
             <td>{{file.expireAt | dateToLocaleString}}</td>
             <td>{{file.downloadCount}}</td>
