@@ -41,7 +41,7 @@ exports.get__before_download = async (query, doc, res) => {
 ) + `
 <div id=bandeau-anonyme-title>Envoi de fichiers avec Filex</div>
 <div id="main">
-    <p>Vous avez demandé le fichier <b>${doc.filename}</b></p>
+    <p>Vous avez demandé le fichier <b>${doc.filename || '<i>sans nom</i>'}</b></p>
     <p><b><i>Informations :</i></b></p>
         <ul>
         <li><b>Taille</b> : ${doc.size} Octets</li>

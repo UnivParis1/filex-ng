@@ -23,7 +23,9 @@
             <th>Téléchargé</th>
         </tr>
         <tr v-for="file in files">
-            <td><a :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">{{file.filename}}</a></td>
+            <td><a :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">
+                <span v-if="file.filename">{{file.filename}}</span><i v-else>aucun nom</i>
+            </a></td>
             <td>{{file.size | formatBytes(2)}}</td>
             <td>{{file.uploadTimestamp | dateToLocaleString}}</td>
             <td>{{file.expireAt | dateToLocaleString}}</td>

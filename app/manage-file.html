@@ -3,7 +3,7 @@
       Chargement en cours, veuillez patienter...
   </div>
   <div v-else>
-      <h2>Fichier « {{file.filename}} »</h2>
+      <h2>Fichier <span v-if="file.filename">« {{file.filename}} »</span><span v-else>sans nom</span></h2>
 
       <span class="notes" v-if="file.deleted">Fichier supprimé</span>
       <button @click="delete_file" v-else>Supprimer ce fichier</button>
