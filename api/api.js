@@ -5,6 +5,7 @@ const db = require('./db')
 const mail = require('./mail');
 const helpers = require('./helpers');
 const various = require('./various');
+const antivirus = require('./antivirus');
 const html_template = require('./html_template')
 
 
@@ -53,6 +54,8 @@ exports.modify_user_file = helpers.express_async(async (req, res) => {
 })
 
 const _create_doc = async (req, params) => {
+    await antivirus.may_check(various.get_file(params._id))
+
     const doc = { 
         ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password', 'uploader'),
 

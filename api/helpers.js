@@ -3,6 +3,7 @@ const fs = require('fs')
 const dns = require('dns')
 const util = require('util')
 const formidable = require('formidable')
+const spawn = require('child_process').spawn;
 
 exports.fsP = {
     copyFile: util.promisify(fs.copyFile),
@@ -120,3 +121,24 @@ exports.form_parse = (req, options) => (
         })
     })
 )
+
+// (inText: string, cmd: string, params: string[]): Promise<string>
+exports.popen = (inText, cmd, params) => {
+    let p = spawn(cmd, params);
+    p.stdin.write(inText);
+    p.stdin.end();
+
+    return new Promise((resolve, reject) => {
+        let output = '';
+        let get_ouput = data => { output += data; };
+        
+        p.stdout.on('data', get_ouput);
+        p.stderr.on('data', get_ouput);
+        p.on('error', event => {
+            reject(event);
+        });
+        p.on('close', code => {
+            if (code === 0) resolve(output); else reject(output);
+        });
+    });
+}

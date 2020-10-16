@@ -37,6 +37,8 @@ let conf = {
         bearer_tokens: [],
         IPs: [],
     },
+
+    //antivirus: 'clamdscan',
 };
 
 module.exports = conf;
