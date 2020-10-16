@@ -57,7 +57,7 @@ const _create_doc = async (req, params) => {
         ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password', 'uploader'),
 
         uploadTimestamp: helpers.now(),
-        expireAt: helpers.addDays(helpers.now(), params.daykeep),
+        expireAt: helpers.addDays(helpers.now(), params.daykeep || 1),
         deleted: false,
         
         ip: conf.request_to_ip(req),
