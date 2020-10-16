@@ -73,6 +73,7 @@ const _body_to_file = async (req, file_id) => {
     try {
         await helpers.promise_WriteStream_pipe(req, out)
         const { size } = await helpers.fsP.stat(file)
+        if (size === 0) throw "empty content";
         return size
     } catch (err) {
         fs.unlink(file, _ => {})
