@@ -1,6 +1,6 @@
 const daykeep_opts = [1,2,3,4,5,6,7,14,15,21,30,45];
 
-new Vue({
+Vue.createApp({
     created() {
         this.get_user_info()
     },
@@ -83,4 +83,4 @@ new Vue({
         },
         formatBytes: formatBytes,
     },
-}).$mount("#main");
+}).mount("#main");

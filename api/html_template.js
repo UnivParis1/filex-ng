@@ -18,7 +18,7 @@ const beginning = (more_meta) => `<!DOCTYPE html>
 `
 
 const base_js_files = `
-<script src="node_modules/vue/dist/vue.js"></script>
+<script src="node_modules/vue/dist/vue.global.js"></script>
 <script src="common.js"></script>
 `
 

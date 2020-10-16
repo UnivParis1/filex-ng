@@ -27,8 +27,8 @@
                 <span v-if="file.filename">{{file.filename}}</span><i v-else>aucun nom</i>
             </a></td>
             <td>{{formatBytes(file.size, 2)}}</td>
-            <td>{{file.uploadTimestamp | dateToLocaleString}}</td>
-            <td>{{file.expireAt | dateToLocaleString}}</td>
+            <td>{{dateToLocaleString(file.uploadTimestamp)}}</td>
+            <td>{{dateToLocaleString(file.expireAt)}}</td>
             <td>{{file.downloadCount}}</td>
         </tr>
     </table>

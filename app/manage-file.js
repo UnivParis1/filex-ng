@@ -1,4 +1,4 @@
-new Vue({
+Vue.createApp({
     created() {
         this.get_file(document.location.hash.replace(/^#/, ''))
     },
@@ -31,4 +31,4 @@ new Vue({
         formatBytes: formatBytes,
         dateToLocaleString: function (o) { return new Date(o).toLocaleString() },
     },
-}).$mount("#main");
+}).mount("#main");
