@@ -62,8 +62,6 @@ Vue.createApp({
                 }, 500);
             }).then(function (resp) {
                 that.uploaded.get_url = resp.get_url;
-            }).catch(function (resp) {
-                alert(resp && resp.err || resp);
             }).finally(function () {
                 that.uploading.xhr = undefined;
             });
