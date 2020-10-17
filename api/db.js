@@ -37,7 +37,7 @@ exports.insert_download = async (log) => (
     (await collection('downloads')).insertOne(log)
 )
 
-exports.set = async (doc, subdoc) => (
+exports.set_upload = async (doc, subdoc) => (
     (await collection('uploads')).updateOne({ _id: doc._id }, { $set: subdoc })
 )
 
