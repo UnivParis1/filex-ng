@@ -31,7 +31,7 @@ exports.un_formatBytes = (formatted) => {
     const suffixes = { K: 1024, M: 1024 ** 2, G: 1024 ** 3 }
     const m = ("" + formatted).match(/^([\d.]+)\s*([KMG])i?[BO]?$/i)
     if (!m) throw "invalid formatted bytes " + formatted
-    return parseFloat(m[1]) * suffixes[m[2]]
+    return parseFloat(m[1]) * suffixes[m[2].toUpperCase()]
 }
 
 // from stackoverflow. complex but it works
