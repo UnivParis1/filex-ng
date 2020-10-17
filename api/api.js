@@ -169,3 +169,25 @@ exports.handle_download = helpers.express_async(async (req, res) => {
         html_template.get__before_download(req.query, doc, res)
     }
 })
+
+exports.get_exemptions = helpers.express_async(async (req, res) => {
+    res.json(await db.get_exemptions())
+})
+exports.set_exemption = helpers.express_async(async (req, res) => {
+    const userid = req.params.userid
+    if (!userid) throw "missing userid parameter"
+
+    if (req.query.quota) helpers.un_formatBytes(req.query.quota) // check the format
+
+    if (req.query.admin) req.query.admin = true
+    if (req.query.max_daykeep) req.query.max_daykeep = parseInt(req.query.max_daykeep)
+    
+    await db.set_exemption(userid, { ...req.query, modifyTimestamp: new Date() });
+    res.json({ ok: true })
+})
+exports.delete_exemption = helpers.express_async(async (req, res) => {
+    const userid = req.params.userid
+    if (!userid) throw "missing userid parameter"
+    await db.delete_exemption(userid, req.query);
+    res.json({ ok: true })
+})

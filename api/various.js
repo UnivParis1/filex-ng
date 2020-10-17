@@ -9,9 +9,11 @@ const get_file = exports.get_file = (file_id) => conf.upload_dir + '/' + file_id
 
 exports.get_user_info = async (user) => {
     if (!user) throw "need relog"
+    const exemption = await db.get_exemption(user.eppn) || {}
     let info = {
-        quota: conf.user_default.quota,
-        max_daykeep: conf.user_default.max_daykeep,
+        is_admin: exemption.admin,
+        quota: exemption.quota && helpers.un_formatBytes(exemption.quota) || conf.user_default.quota,
+        max_daykeep: exemption.max_daykeep || conf.user_default.max_daykeep,
         files_summary_by_deleted: _.merge({ 
             false: { total_size: 0, count: 0 },
             true: { total_size: 0, count: 0 },
@@ -55,4 +57,9 @@ exports.remove_expired = async function() {
         console.log("removing expired", doc)
         delete_file(doc, { force: true })
     }
+}
+
+exports.is_logged_user_admin = async (req) => {
+    const exemption = await db.get_exemption(req.session.user.eppn)
+    return (exemption || {}).admin
 }

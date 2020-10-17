@@ -29,6 +29,14 @@ exports.get_upload = async (id) => (
     (await collection('uploads')).find({ _id: _id(id) }).limit(1).next()
 );
 
+exports.get_exemption = async (userid) => (
+    (await collection('exemptions')).find({ _id: userid }).limit(1).next()
+);
+
+exports.get_exemptions = async () => (
+    (await (await collection('exemptions')).find().sort({ modifyTimestamp: 1 }).toArray()).map(e => helpers.renameKey(e, '_id', 'userid'))
+);
+
 exports.insert_upload = async (doc) => (
     (await collection('uploads')).insertOne(doc)
 )
@@ -39,6 +47,18 @@ exports.insert_download = async (log) => (
 
 exports.set_upload = async (doc, subdoc) => (
     (await collection('uploads')).updateOne({ _id: doc._id }, { $set: subdoc })
+)
+
+exports.set_exemption = async (userid, doc) => (
+    (await collection('exemptions')).replaceOne({ _id: userid }, doc, { upsert: true })
+)
+
+exports.set_exemption = async (userid, doc) => (
+    (await collection('exemptions')).replaceOne({ _id: userid }, doc, { upsert: true })
+)
+
+exports.delete_exemption = async (userid) => (
+    (await collection('exemptions')).deleteOne({ _id: userid })
 )
 
 exports.files_to_delete = async () => (

@@ -3,6 +3,7 @@
 const express = require('express')
 const session = require('express-session');
 const conf = require('./conf')
+const db = require('./api/db')
 const shib = require('./api/shib')
 const api = require('./api/api')
 const helpers = require('./api/helpers')
@@ -40,6 +41,17 @@ const require_trusted = (req, res, next) => {
         res.status(403).json({ ok: false, err: "no valid 'Authorization Bearer' or IP not authorized (see conf.trusted)" })
     }
 }
+const require_admin = async (req, res, next) => {
+    try {
+        if (await various.is_logged_user_admin(req)) {
+            next();
+            return;
+        }
+    } catch (e) {}
+    
+    const err = (await db.get_exemptions()).length === 0 ? "veuillez créer un admin avec le shell mongo : db.exemptions.insertOne({ _id: '" + req.session.user.eppn + "', admin: true })" : "reservé aux admins"
+    res.status(401).json({ ok: false, err })
+}
 
 app.use('/user', get_session, shib.may_create_session, require_session)
 app.put('/user/upload', api.handle_upload)
@@ -57,6 +69,14 @@ app.post('/trusted/upload', api.handle_trusted_upload)
 app.get('/get', api.handle_download) 
   
 app.get([/^\/$/, '/manage', '/manage-file'], get_session, shib.may_create_session, shib.ensure_connected, html_template.static)
+
+app.use('/exemptions', get_session, shib.may_create_session, require_admin)
+app.get('/exemptions', api.get_exemptions)
+app.delete('/exemptions/:userid', api.delete_exemption)
+app.put('/exemptions/:userid', api.set_exemption)
+
+app.use('/admin', get_session, shib.may_create_session, shib.ensure_connected, require_admin)
+app.get('/admin', html_template.static)
 
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))

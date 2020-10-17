@@ -1,0 +1,26 @@
+
+<div id="main" v-cloak>
+  <div v-if="!exemptions">
+      Chargement en cours, veuillez patienter...
+  </div>
+  <div v-else>
+    <h2>Dérogations et administrateurs</h2>
+      <table>
+          <tr>
+            <th>Date<br><small>de dernière modification</small></th>
+            <th>Identifiant<br>utilisateur</th>
+            <th>Admin</th>
+            <th>Durée max avant expiration<br><small>(en jours)</small></th>
+            <th>Quota total<br><small>exemple 10G</small></th>
+            <th>Description</th>
+            <th></th>
+          </tr>
+          <tr v-for="e in exemptions">
+              <td v-is="'exemption'" :e="e" @remove='remove(e)'></td>
+          </tr>
+      </table>
+      <br>
+      <button @click="create_new()">➕ Créer une nouvelle dérogation</button>
+  </div>
+</div>
+<script src="admin.js"></script>

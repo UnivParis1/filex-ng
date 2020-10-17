@@ -134,6 +134,7 @@ td {
 }
 th {
     text-align: center;
+    padding: 0 1rem;
 }
 tr:nth-child(even) {
     background-color: #eee;
@@ -145,3 +146,12 @@ tr:nth-child(even) {
 }
 
 dt { font-weight: bold;}
+
+
+input.align-right {
+    text-align: right;
+}
+/* workaround firefox messy placeholder on <input type="number"> */
+input[type=number].align-right::-moz-placeholder {
+    text-align: left;
+}

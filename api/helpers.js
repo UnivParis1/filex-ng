@@ -63,6 +63,14 @@ exports.keyBy = (l, key, valueKey) => {
     return r
 }
 
+exports.renameKey = (o, oldK, newK) => {
+    if (o && oldK in o) {
+        const { [oldK]: value, ...o_ } = o;
+        return { ...o_, [newK]: value }
+    } else {
+        return { ...o }
+    }
+}
 
 // from https://github.com/Abazhenov/express-async-handler
 exports.express_async = (fn) => (

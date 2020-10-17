@@ -26,7 +26,15 @@ Vue.createApp({
         },
         daykeep_opts() {
             var max_daykeep = this.info && this.info.max_daykeep;
-            return max_daykeep && daykeep_opts.filter(function (daykeep) { return daykeep <= max_daykeep })
+            if (!max_daykeep) return;
+
+            // prune non allowed values
+            l = daykeep_opts.filter(function (daykeep) { return daykeep <= max_daykeep });
+
+            // allow users to choose their exact max_daykeep (useful for users with max_daykeep exemption)
+            if (l[l.length-1] < max_daykeep) l.push(max_daykeep)
+
+            return l;
         },
     },
     methods: {
@@ -73,6 +81,10 @@ Vue.createApp({
             var that = this;
             call_xhr('GET', '/user/info', null).then(function (info) {
                 that.info = info;
+                // for users with max_daykeep exemption lower than other users
+                if (that.upload.daykeep > info.max_daykeep) {
+                    that.upload.daykeep = info.max_daykeep
+                }
             })
         },
         back_to_upload_choice() {
