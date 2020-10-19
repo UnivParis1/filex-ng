@@ -156,7 +156,13 @@ exports.handle_download = helpers.express_async(async (req, res) => {
             }
             _.each({
                 "Content-Type": doc.type,
-                ...(doc.filename ? { 'Content-Disposition': "attachment; filename=" + doc.filename } : {}),
+                ...(doc.filename ? { 
+                    'Content-Disposition': `attachment; filename="${
+                        _.deburr(doc.filename).replace(/[^\w-]/g, '-')
+                    }"; filename*=UTF-8''${
+                        encodeURIComponent(doc.filename)
+                    }` } : {}
+                ),
                 'Content-transfert-encoding': "binary",
                 'Content-Length': doc.size,
             }, (v, k) => { if (v) res.setHeader(k, v) })
