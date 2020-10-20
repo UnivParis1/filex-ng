@@ -51,9 +51,10 @@ h2 {
 
 h3 {
     padding-left: 15px;
-    color: #e55302;
-    font-size: 14px;
-
+    color :  #656565;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding-top: 1rem;
 }
 
 p,
@@ -69,7 +70,6 @@ form {
     border-top: 1px #ddd solid;
     padding-top: 15px;
     padding-bottom: 25px;
-    margin-bottom: 30px;
     color: #333;
 }
 
@@ -147,6 +147,9 @@ tr:nth-child(even) {
 
 dt { font-weight: bold;}
 
+dd {
+    margin: 0.2rem 0 0.7rem 1rem;
+}
 
 input.align-right {
     text-align: right;
@@ -154,4 +157,21 @@ input.align-right {
 /* workaround firefox messy placeholder on <input type="number"> */
 input[type=number].align-right::-moz-placeholder {
     text-align: left;
+}
+
+.uploaded_msg {
+    background: #f7f7f8;
+    border-bottom: 1px #ddd solid;
+    border-top: 1px #ddd solid;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    margin-top: 25px;    
+}
+
+.manage_float_right {
+    float: right;
+    padding : 10px;
+    margin-bottom: 10px; 
+    border-left: 1px dotted #AAA;
 }

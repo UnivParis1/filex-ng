@@ -6,7 +6,7 @@
   <div v-else>
     <h2>Vos {{files.length}} fichiers<span v-if="hide_deleted"> non expirés</span></h2>
 
-    <div style="float: right">Espace Utilisé : {{formatBytes(files_size, 2)}}
+    <div class="manage_float_right">Espace Utilisé : {{formatBytes(files_size, 2)}}
         <p></p>
         <button @click="hide_deleted = !hide_deleted">
             <span v-if="hide_deleted">Montrer les fichiers expirés</span>

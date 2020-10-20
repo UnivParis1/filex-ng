@@ -4,6 +4,7 @@ Vue.createApp({
     },
     data: () => ({
             file: undefined,
+            info: undefined,
     }),
     computed: {
     },
@@ -15,6 +16,9 @@ Vue.createApp({
             }).catch(function (_resp) {
                 document.location.href = "/manage";
             })    
+            call_xhr('GET', '/user/info', null).then(function (info) {
+                that.info = info;
+            })
         },
         delete_file() {
             call_xhr('DELETE', '/user/file/' + this.file._id, null).then(function () {

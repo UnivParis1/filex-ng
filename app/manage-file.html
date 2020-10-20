@@ -2,7 +2,7 @@
   <div v-if="!file">
       Chargement en cours, veuillez patienter...
   </div>
-  <div v-else>
+  <div v-else style="margin-left: 0.2rem">
       <h2>Fichier <span v-if="file.filename">« {{file.filename}} »</span><span v-else>sans nom</span></h2>
 
       <span class="notes" v-if="file.deleted">Fichier supprimé</span>
@@ -10,7 +10,7 @@
       <dl>
       <dt>Déposé le</dt><dd>{{dateToLocaleString(file.uploadTimestamp)}}</dd>
       <dt>Expire le</dt><dd>{{dateToLocaleString(file.expireAt)}}
-        <br><button @click="extend_lifetime">Prolonger</button>
+        <button style="margin-left: 0.5rem" @click="extend_lifetime">Prolonger de {{info && info.max_daykeep}} jours à partir de maintenant</button>
       </dd>
       <dt>Taille</dt> <dd>{{formatBytes(file.size, 2)}}</dd>
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
