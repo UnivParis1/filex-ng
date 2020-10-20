@@ -19,6 +19,7 @@ const beginning = (more_meta) => `<!DOCTYPE html>
 
 const base_js_files = `
 <script src="node_modules/vue/dist/vue.global.prod.js"></script>
+<script>if (window.document.documentMode || window.attachEvent) document.location.href = "https://ent.univ-paris1.fr/ProlongationENT/no-ie.html?service=CFilex"; </script>
 <script>if (!window.Vue) alert("Votre navigateur n'est pas géré, veuillez utiliser un navigateur plus récent ou le service https://filesender.renater.fr/"); </script>
 <script src="common.js"></script>
 `
