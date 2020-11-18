@@ -165,6 +165,10 @@ input[type=number].align-right::-moz-placeholder {
     text-align: left;
 }
 
+form.uploading {
+    opacity: 0.5;
+}
+
 .uploaded_msg {
     background: #f7f7f8;
     border-bottom: 1px #ddd solid;
