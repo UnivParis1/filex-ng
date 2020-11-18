@@ -81,6 +81,8 @@ app.get('/admin', html_template.static)
 app.use("/node_modules", express.static(__dirname + '/node_modules'))
 app.use(express.static(__dirname + '/app'))
 
+app.get('/journal', (_req, res) => res.json({ ok: true }))
+
 app.listen(conf.port)
 
 various.remove_expired()

@@ -44,6 +44,7 @@ Vue.createApp({
         upload_abort() {
             this.uploading.xhr.abort();
             this.uploading.xhr = undefined;
+            call_xhr('GET', '/journal?action=upload_abort', null)
         },
         send_file(file) {
             var that = this;
