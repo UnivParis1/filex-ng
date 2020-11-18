@@ -91,12 +91,14 @@ exports.promise_WriteStream_pipe = (req, writeStream) => (
             console.log('writeStream close event')
             if (ok) resolve()
         })
-        req.on('aborted', () => console.error("aborted")) // handled by 'close' event
-        req.on('error', () => console.error("error")) // handled by 'close' event
+        req.on('aborted', () => { console.error("aborted"); reject('aborted') }) // more handled by 'close' event
+        req.on('error', () => { console.error("error"); reject('error') }) // more handled by 'close' event
         req.on('close', async () => {
-            console.log("error occurred, req close")
             writeStream.close(); // need to be done to avoid leaks
-            reject()
+            if (!ok) {
+                console.log("error occurred, req close")
+                reject() // in case not already done
+            }
         })
         req.pipe(writeStream)   
     })
