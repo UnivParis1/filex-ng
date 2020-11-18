@@ -4,6 +4,10 @@ function array_sum(arr) {
     return r;
 }
 
+function exception_to_null(f) {
+    try { return f() } catch (e) { return null }
+}
+
 function encode_params(params) {
     var k;
     var r = [];
@@ -62,7 +66,7 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
         if (prepare_xhr) prepare_xhr(xhr);
         xhr.onerror = reject;
         xhr.onload = function () {
-            const resp = JSON.parse(xhr.responseText);
+            const resp = exception_to_null(() => JSON.parse(xhr.responseText))
             if (resp && xhr.status === 200) resolve(resp); else reject(resp || xhr.responseText);
         };
         xhr.open(method, url, true);
@@ -72,7 +76,7 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
 
 function call_xhr(method, url, body, prepare_xhr) {
     return call_xhr_raw(method, url, body, prepare_xhr).catch(function (resp) {
-        alert(resp && resp.err || resp);
+        alert("" + (resp && resp.err || resp));
         throw resp;
     })
 }
