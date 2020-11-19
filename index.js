@@ -8,6 +8,7 @@ const shib = require('./api/shib')
 const api = require('./api/api')
 const helpers = require('./api/helpers')
 const various = require('./api/various')
+const service_reload = require('./api/service_reload')
 const html_template = require('./api/html_template')
 
 
@@ -86,7 +87,8 @@ app.use(express.static(__dirname + '/app'))
 
 app.get('/journal', (_req, res) => res.json({ ok: true }))
 
-app.listen(conf.port)
+const server = app.listen(conf.port, service_reload.may_write_PIDFile)
+service_reload.may_handle_reload(server)
 
 various.remove_expired()
 setInterval(various.remove_expired, helpers.minutes_to_ms(5))
