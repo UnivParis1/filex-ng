@@ -43,6 +43,8 @@ Pour qu'un utilisateur télécharge votre fichier, envoyez lui cette adresse :
 
 ${get_url(doc._id)}
 
+` + (doc.password ? `Mot de passe pour télécharger le fichier : ${doc.password}
+` : '') + `
 
 Information sur le fichier déposé :
 
