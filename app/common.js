@@ -64,7 +64,7 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         if (prepare_xhr) prepare_xhr(xhr);
-        xhr.onerror = reject;
+        xhr.onerror = _ => reject("Échec. Veuillez réessayer.")
         xhr.onload = function () {
             const resp = exception_to_null(() => JSON.parse(xhr.responseText))
             if (resp && xhr.status === 200) resolve(resp); else reject(resp || xhr.responseText);
