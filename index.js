@@ -18,8 +18,11 @@ const get_session = session({
     cookie: { maxAge: helpers.minutes_to_ms(5) },
 })
 const require_session = (req, res, next) => {
-    if (!req.session.user) throw "need relog"
-    next()
+    if (req.session.user) {
+        next()
+    } else {
+        res.status(401).json({ ok: false, err: "need relog" })
+    }
 }
 const _is_trusted = (req) => {
     const bearer = ((req.headers.authorization || '').match(/^Bearer (.*)/) || [])[1]
