@@ -9,10 +9,11 @@ const antivirus = require('./antivirus');
 const html_template = require('./html_template')
 
 
+const express_async = helpers.express_async
 const get_url = html_template.get_url
 const get_file = various.get_file
 
-exports.user_info = helpers.express_async(async (req, res) => {
+exports.user_info = express_async(async (req, res) => {
     res.json(await various.get_user_info(req.session.user))
 })
 
@@ -20,13 +21,13 @@ const add_downloadCount = async (docs) => {
     const id2count = await db.files_download_count(docs.map(doc => doc._id))
     docs.forEach(doc => doc.downloadCount = id2count[doc._id] || 0)
 }
-exports.user_files = helpers.express_async(async (req, res) => {
+exports.user_files = express_async(async (req, res) => {
     let docs = await db.user_files(req.session.user, req.query.include_deleted === 'true')
     await add_downloadCount(docs)
     res.json(docs)
 })
 
-exports.user_file = helpers.express_async(async (req, res) => {
+exports.user_file = express_async(async (req, res) => {
     const file = await db.user_file(req.session.user, req.params.id)
     if (!file) throw "invalid id"
     file.downloads = await db.file_downloads(file._id)
@@ -34,13 +35,13 @@ exports.user_file = helpers.express_async(async (req, res) => {
     res.json(file)
 })
 
-exports.delete_user_file = helpers.express_async(async (req, res) => {
+exports.delete_user_file = express_async(async (req, res) => {
     const doc = await db.user_file(req.session.user, req.params.id)
     await various.delete_file(doc, { force: true })
     res.json({ ok: true })
 })
 
-exports.modify_user_file = helpers.express_async(async (req, res) => {
+exports.modify_user_file = express_async(async (req, res) => {
     const doc = await db.user_file(req.session.user, req.params.id)
     if (req.query.extend_lifetime) {
         const user_info = await various.get_user_info(req.session.user)
@@ -94,7 +95,7 @@ const _upload_response = (req, res, doc, prefer_json) => {
     }
 }
 
-exports.handle_upload = helpers.express_async(async (req, res) => {
+exports.handle_upload = express_async(async (req, res) => {
     const user_info = await various.get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {
         throw "invalid daykeep";
@@ -107,7 +108,7 @@ exports.handle_upload = helpers.express_async(async (req, res) => {
     _upload_response(req, res, doc, true)
 })
 
-exports.handle_trusted_upload = helpers.express_async(async (req, res) => {
+exports.handle_trusted_upload = express_async(async (req, res) => {
     const file_id = db.new_id()
     let params;
     if (/^multipart[/]form-data/i.test(req.headers['content-type'])) {
@@ -136,7 +137,7 @@ exports.handle_trusted_upload = helpers.express_async(async (req, res) => {
     _upload_response(req, res, doc, false)
 })
 
-exports.handle_download = helpers.express_async(async (req, res) => {
+exports.handle_download = express_async(async (req, res) => {
     const file_id = req.query.id
     if (!file_id) {
         throw "missing id parameter"
@@ -176,10 +177,10 @@ exports.handle_download = helpers.express_async(async (req, res) => {
     }
 })
 
-exports.get_exemptions = helpers.express_async(async (req, res) => {
+exports.get_exemptions = express_async(async (req, res) => {
     res.json(await db.get_exemptions())
 })
-exports.set_exemption = helpers.express_async(async (req, res) => {
+exports.set_exemption = express_async(async (req, res) => {
     const userid = req.params.userid
     if (!userid) throw "missing userid parameter"
 
@@ -191,7 +192,7 @@ exports.set_exemption = helpers.express_async(async (req, res) => {
     await db.set_exemption(userid, { ...req.query, modifyTimestamp: new Date() });
     res.json({ ok: true })
 })
-exports.delete_exemption = helpers.express_async(async (req, res) => {
+exports.delete_exemption = express_async(async (req, res) => {
     const userid = req.params.userid
     if (!userid) throw "missing userid parameter"
     await db.delete_exemption(userid, req.query);
