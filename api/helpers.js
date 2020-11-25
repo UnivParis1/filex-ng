@@ -72,17 +72,6 @@ exports.renameKey = (o, oldK, newK) => {
     }
 }
 
-// from https://github.com/Abazhenov/express-async-handler
-exports.express_async = (fn) => (
-    (req, res, next) => (
-        Promise.resolve(fn(req, res, next)).catch(err => {
-            console.error("ERROR", err)
-            // try to send the error if possible
-            try { res.status(500).json({ ok: false, err: ""+err }) } catch (_) {}
-        })
-    )
-)
-
 exports.promise_WriteStream_pipe = (req, writeStream) => (
     new Promise((resolve, reject) => {
         let ok = false

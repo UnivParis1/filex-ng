@@ -5,6 +5,17 @@ const helpers = require('./helpers');
 const mail = require('./mail');
 
 
+// from https://github.com/Abazhenov/express-async-handler
+exports.express_async = (fn) => (
+    (req, res, next) => (
+        Promise.resolve(fn(req, res, next)).catch(err => {
+            console.error("ERROR", err)
+            // try to send the error if possible
+            try { res.status(500).json({ ok: false, err: ""+err }) } catch (_) {}
+        })
+    )
+)
+
 const get_file = exports.get_file = (file_id) => conf.upload_dir + '/' + file_id
 
 exports.get_user_info = async (user) => {
