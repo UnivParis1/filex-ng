@@ -9,7 +9,7 @@ const mail = require('./mail');
 exports.express_async = (fn) => (
     (req, res, next) => (
         Promise.resolve(fn(req, res, next)).catch(err => {
-            console.error("ERROR", err)
+            console.error(conf.request_to_ip(req), req.method, req.originalUrl, "ERROR:", err)
             // try to send the error if possible
             try { res.status(500).json({ ok: false, err: ""+err }) } catch (_) {}
         })
