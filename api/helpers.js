@@ -100,7 +100,7 @@ exports.promise_ReadStream_pipe = (readStream, prepare_response) => (
         readStream.on('end', resolve)
         readStream.on('ready', function () {
             const response = prepare_response()
-            const close_input = err => { readStream.close(); reject(err || "unknown error") } // if client aborted/timeout...
+            const close_input = err => { readStream.close(); reject(err || "client abort or timeout or ???") }
             response.on('close', close_input) // should be enough
             response.on('error', close_input) // adding more just in case /o\
             response.on('finish', close_input) // adding more just in case /o\
