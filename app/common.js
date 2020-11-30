@@ -60,6 +60,12 @@ function format_remaining_time(seconds) {
     return Math.round(minutes) + "m";
 }
 
+function journal(params) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/journal?' + encode_params(params), true);
+    xhr.send();
+}
+
 function call_xhr_raw(method, url, body, prepare_xhr) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
