@@ -70,10 +70,22 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         if (prepare_xhr) prepare_xhr(xhr);
-        xhr.onerror = _ => reject("Échec. Veuillez réessayer.")
+        xhr.ontimeout = _ => {
+            journal({ event: 'timeout' });
+            reject("Échec. Veuillez réessayer.")
+        }
+        xhr.onerror = _ => {
+            journal({ event: 'error' });
+            reject("Échec. Veuillez réessayer.")
+        }
         xhr.onload = function () {
             const resp = exception_to_null(() => JSON.parse(xhr.responseText))
-            if (resp && xhr.status === 200) resolve(resp); else reject(resp || xhr.responseText);
+            if (resp && xhr.status === 200) {
+                resolve(resp); 
+            } else {
+                journal({ event: 'bad_status', status: xhr.status });
+                reject(resp || xhr.responseText);
+            }
         };
         xhr.open(method, url, true);
         xhr.send(body);
