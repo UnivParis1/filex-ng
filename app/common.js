@@ -72,11 +72,11 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
         if (prepare_xhr) prepare_xhr(xhr);
         xhr.ontimeout = _ => {
             journal({ event: 'timeout' });
-            reject("Échec. Veuillez réessayer.")
+            reject("network_error")
         }
         xhr.onerror = _ => {
             journal({ event: 'error' });
-            reject("Échec. Veuillez réessayer.")
+            reject("network_error")
         }
         xhr.onload = function () {
             const resp = exception_to_null(() => JSON.parse(xhr.responseText))
@@ -92,9 +92,13 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
     })
 }
 
+function err_to_string(resp) {
+    return resp === "network_error" ? "Échec. Veuillez réessayer." : "" + (resp && resp.err || resp);
+}
+
 function call_xhr(method, url, body, prepare_xhr) {
     return call_xhr_raw(method, url, body, prepare_xhr).catch(function (resp) {
-        alert("" + (resp && resp.err || resp));
+        alert(err_to_string(resp));
         throw resp;
     })
 }
