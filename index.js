@@ -60,6 +60,7 @@ const require_admin = async (req, res, next) => {
 app.use('/user', get_session, shib.may_create_session, require_session)
 app.put('/user/upload', api.handle_upload)
 app.post('/user/upload', api.handle_upload)
+app.get('/user/upload/partial', api.get_partial_upload_size)
 app.get('/user/info', api.user_info)
 app.get('/user/files', api.user_files)
 app.get('/user/file/:id', api.user_file)

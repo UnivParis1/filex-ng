@@ -54,33 +54,50 @@ exports.modify_user_file = express_async(async (req, res) => {
     res.json({ ok: true })
 })
 
-const _create_doc = async (req, params) => {
-    await antivirus.may_check(various.get_file(params._id))
+const _save_doc = async (req, params, partial_upload) => {
+    if (!partial_upload) {
+        await antivirus.may_check(various.get_file(params._id))
+    }
 
-    const doc = { 
+    let doc = { 
         ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password', 'uploader'),
 
         uploadTimestamp: helpers.now(),
-        expireAt: helpers.addDays(helpers.now(), params.daykeep || 1),
+        expireAt: helpers.addDays(helpers.now(), partial_upload ? 1 : params.daykeep || 1),
         deleted: false,
         
         ip: conf.request_to_ip(req),
         user_agent: req.headers['user-agent'],
     }
-    await db.insert_upload(doc)
+    if (partial_upload) {
+        doc.partial_uploader_file_id = params.id
+    }
+    await db.set_upload(doc)
     return doc
 }
 
-const _body_to_file = async (req, file_id) => {
+const _save_partial_upload = async (req, file_id) => {
+    try {
+        await _save_doc(req, { ...req.query, uploader: req.session.user, _id: file_id }, true)
+    } catch (err_) {
+        console.error(err_)
+    }
+}
+
+const _body_to_file = async (req, file_id, save_partial_upload) => {
     const file = get_file(file_id)
-    const out = fs.createWriteStream(file)
+    const out = fs.createWriteStream(file, { flags: 'a' })
     try {
         await helpers.promise_WriteStream_pipe(req, out)
         const { size } = await helpers.fsP.stat(file)
         if (size === 0) throw "empty content";
         return size
     } catch (err) {
-        fs.unlink(file, _ => {})
+        if (save_partial_upload) {
+            await _save_partial_upload(req, file_id)
+        } else {
+            fs.unlink(file, _ => {})
+        }
         throw err;
     }
 }
@@ -95,15 +112,40 @@ const _upload_response = (req, res, doc, prefer_json) => {
     }
 }
 
+const throw_ = (err) => { throw err }
+
+const _get_partial_upload = async (req) => (
+    await db.get_upload_({ uploader: req.session.user, partial_uploader_file_id: req.query.id }) ||
+        throw_("partial_upload_impossible")
+)
+
+exports.get_partial_upload_size = express_async(async (req, res) => {
+    const doc = await _get_partial_upload(req)
+    const { size } = await helpers.fsP.stat(get_file(doc._id))
+    res.json({ ok: true, size })
+})
+
+const _prepare_partial_upload = async (req) => {
+    const doc = await _get_partial_upload(req)
+    const { size } = await helpers.fsP.stat(get_file(doc._id))
+    if (size != req.query.bytes_start) {
+        throw "partial_upload_impossible"
+    }
+    console.log("partial upload at", size)
+    // we are starting partial upload. give it some time to succeed
+    db.set_upload(doc, { expireAt: helpers.addDays(helpers.now(), 1)})
+    return doc._id
+}
+
 exports.handle_upload = express_async(async (req, res) => {
     const user_info = await various.get_user_info(req.session.user)
     if (req.query.daykeep > user_info.max_daykeep) {
         throw "invalid daykeep";
     }
-    const file_id = db.new_id()
-    const size = await _body_to_file(req, file_id)
+    const file_id = req.query.bytes_start ? await _prepare_partial_upload(req) : db.new_id()
+    const size = await _body_to_file(req, file_id, true)
     if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
-    const doc = await _create_doc(req, { ...req.query, size, uploader: req.session.user, _id: file_id })
+    const doc = await _save_doc(req, { ...req.query, size, uploader: req.session.user, _id: file_id })
     mail.notify_on_upload(doc) // do not wait for it to return
     _upload_response(req, res, doc, true)
 })
@@ -132,7 +174,7 @@ exports.handle_trusted_upload = express_async(async (req, res) => {
         params = { ...req.query, size }
     }
     const uploader = { eppn: params.owner, mail: params.mail || params.owner }
-    const doc = await _create_doc(req, { ...params, _id: file_id, uploader })
+    const doc = await _save_doc(req, { ...params, _id: file_id, uploader })
     console.log(doc)
     _upload_response(req, res, doc, false)
 })

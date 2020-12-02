@@ -25,9 +25,11 @@ const collection = async (collection_name) => (
     (await get_client()).collection(collection_name)
 )
 
-exports.get_upload = async (id) => (
-    (await collection('uploads')).find({ _id: _id(id) }).limit(1).next()
+const get_upload_ = exports.get_upload_ = async (query) => (
+    (await collection('uploads')).find(query).limit(1).next()
 );
+
+exports.get_upload = (id) => get_upload_({ _id: _id(id) })
 
 exports.get_exemption = async (userid) => (
     (await collection('exemptions')).find({ _id: userid }).limit(1).next()
@@ -37,16 +39,18 @@ exports.get_exemptions = async () => (
     (await (await collection('exemptions')).find().sort({ modifyTimestamp: 1 }).toArray()).map(e => helpers.renameKey(e, '_id', 'userid'))
 );
 
-exports.insert_upload = async (doc) => (
-    (await collection('uploads')).insertOne(doc)
-)
-
 exports.insert_download = async (log) => (
     (await collection('downloads')).insertOne(log)
 )
 
 exports.set_upload = async (doc, subdoc) => (
-    (await collection('uploads')).updateOne({ _id: doc._id }, { $set: subdoc })
+    subdoc ?
+        (await collection('uploads')).updateOne({ _id: doc._id }, { $set: subdoc }) :
+        (await collection('uploads')).replaceOne({ _id: doc._id }, doc, { upsert: true })
+)
+
+exports.delete_upload = async (doc) => (
+    (await collection('uploads')).deleteOne({ _id: doc._id })
 )
 
 exports.set_exemption = async (userid, doc) => (
@@ -79,7 +83,7 @@ const filter_deleted = (filter, include_deleted) => (
 
 exports.user_files = async (user, include_deleted) => (
     (await collection('uploads')).find(
-        filter_deleted({ "uploader.eppn": user.eppn }, include_deleted),
+        filter_deleted({ "uploader.eppn": user.eppn, "partial_uploader_file_id": { $exists: false } }, include_deleted),
         { projection: { uploader: 0, password: 0 } },
     ).sort({ "uploadTimestamp": -1 }).toArray()
 )

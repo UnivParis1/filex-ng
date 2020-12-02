@@ -27,7 +27,7 @@
 
     <h2>Cette application permet d'envoyer de gros fichiers (il vous reste {{formatBytes(info.remaining_quota, 2)}}).</h2>
 
-    <form :class="{ uploading: !!uploading.xhr }">
+    <form :class="{ uploading: !!uploading.xhr || !!uploading.trying_to_continue }">
 
         <p>Expiration du fichier : <select v-model="upload.daykeep">
             <option v-for="nb in daykeep_opts" :value="nb">
@@ -52,11 +52,14 @@
         </label>
         <input type="submit" value="Envoyer" style="display: none">
     </form>
-    <div v-if="uploading.xhr">
+    <div v-if="uploading.xhr || uploading.trying_to_continue">
         <progress :value="uploading.loaded" :max="uploading.total" v-if="uploading.total"></progress>
-        <span>Temps restant : 
+        <span v-if="uploading.xhr">Temps restant : 
             <span v-if="uploading.estimated_remaining_time">{{uploading.estimated_remaining_time}}</span>
             <i v-else>estimation en cours</i>
+        </span>
+        <span v-else>
+            Une erreur a eu lieu, tentative de reprise...
         </span>
         <button @click="upload_abort">Annuler</button>
     </div>

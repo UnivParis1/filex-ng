@@ -104,3 +104,53 @@ function call_xhr(method, url, body, prepare_xhr) {
         throw resp;
     })
 }
+
+function random_id() {
+    return Math.random().toString(36).slice(2); // ugly but short and enough for our needs
+}
+
+var first_get_delay = 200 /* milliseconds */;
+var max_get_tries = 10;
+function _get_delay(get_try_count) {
+    return first_get_delay * Math.pow(2, get_try_count);
+}
+//console.info("max delay before giving up upload will be", _get_delay(max_get_tries) / 60 / 1000, "minutes");
+function _try_to_continue_upload(state, resolve, reject) {
+    console.log("try_to_continue_upload", "#" + state.get_try_count);
+    setTimeout(() => {
+        call_xhr_raw('GET', '/user/upload/partial?' + encode_params({ id: state.id }), null).then(function (partial) {
+            var progressing = partial.size > (state.bytes_start || 0);
+            console.log("| last upload start " + (state.bytes_start / 1e6), "| server has size " + (partial.size / 1e6), " => progressing is " + progressing, "| prev is_upload_retry " + state.is_upload_retry);
+            if (!state.is_upload_retry || progressing) {
+                console.log("trying partial upload at", partial.size);
+                state.bytes_start = partial.size
+                state.is_upload_retry = !progressing;
+                resolve(state);
+            } else {
+                reject('network_error');
+            }
+        }).catch(function (err) {
+            if (err === "network_error" && state.get_try_count <= max_get_tries) {
+                state.get_try_count++;
+                _try_to_continue_upload(state, resolve, reject);
+            } else if (err.err === 'partial_upload_impossible' && !state.is_upload_retry) {
+                console.log("retry from beginning");
+                delete state.bytes_start;
+                state.is_upload_retry = true
+                resolve(state);
+            } else {
+                console.error(err)
+                reject('network_error'); // rethrowing initial error
+            }
+        })
+    }, _get_delay(state.get_try_count))
+}
+
+// upload state = { file: File, id: string, bytes_start: number, is_upload_retry: boolean }
+function try_to_continue_upload(state) {
+    state.get_try_count = 1;
+    return new Promise(function (resolve, reject) {
+        _try_to_continue_upload(state, resolve, reject);
+    })
+}
+
