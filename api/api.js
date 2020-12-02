@@ -78,7 +78,7 @@ const _save_doc = async (req, params, partial_upload) => {
 
 const _save_partial_upload = async (req, file_id) => {
     try {
-        await _save_doc(req, { ...req.query, uploader: req.session.user, _id: file_id }, true)
+        await _save_doc(req, { ...req.query, uploader: req.session && req.session.user, _id: file_id }, true)
     } catch (err_) {
         console.error(err_)
     }
@@ -86,6 +86,7 @@ const _save_partial_upload = async (req, file_id) => {
 
 const _body_to_file = async (req, file_id, save_partial_upload) => {
     const file = get_file(file_id)
+    await _save_partial_upload(req, file_id) // in case process is stopped, ensure aborted uploads can be removed
     const out = fs.createWriteStream(file, { flags: 'a' })
     try {
         await helpers.promise_WriteStream_pipe(req, out)
