@@ -82,6 +82,8 @@ function call_xhr_raw(method, url, body, prepare_xhr) {
             const resp = exception_to_null(() => JSON.parse(xhr.responseText))
             if (resp && xhr.status === 200) {
                 resolve(resp); 
+            } else if (xhr.status === 502) {
+                reject("network_error"); // ugly, but simple
             } else {
                 journal({ event: 'bad_status', status: xhr.status });
                 reject(resp || xhr.responseText);
