@@ -2,6 +2,7 @@
 
 const express = require('express')
 const session = require('express-session');
+const session_file_store = require('session-file-store')
 const conf = require('./conf')
 const db = require('./api/db')
 const shib = require('./api/shib')
@@ -11,12 +12,11 @@ const various = require('./api/various')
 const service_reload = require('./api/service_reload')
 const html_template = require('./api/html_template')
 
-
+const session_FileStore = session_file_store(session)
 const app = express()
-
 const get_session = session({
-    secret: conf.session.secret, resave: false, saveUninitialized: false, 
-    cookie: { maxAge: helpers.minutes_to_ms(5) },
+    resave: false, saveUninitialized: false, ...conf.session,
+    store: new session_FileStore(conf.session_store),
 })
 const require_session = (req, res, next) => {
     if (req.session.user) {

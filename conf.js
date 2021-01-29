@@ -22,7 +22,11 @@ let conf = {
 
     session: {
         'secret': 'XXXfilex-ngXXX',
-        'FileStore': { path: '/tmp', retries: 0 },
+    },
+    session_store: { 
+        retries: 0, // not needed on a local filesystem
+        path: '/tmp',
+        ttl: 10 /* minutes */ * 60, // inactivity time (uploading a file postpones expiration)
     },
     
     mail: {

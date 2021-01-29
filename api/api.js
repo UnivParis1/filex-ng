@@ -84,11 +84,20 @@ const _save_partial_upload = async (req, file_id) => {
     }
 }
 
+const _keep_user_session_live = (req) => (
+    req.session && setInterval(_ => {
+        console.log("keeping_user_session_live", req.session)
+        req.session.save(_ => {})
+    }, conf.session_store.ttl / 2 * 1000)
+)
+
 const _body_to_file = async (req, file_id, save_partial_upload) => {
     const file = get_file(file_id)
     await _save_partial_upload(req, file_id) // in case process is stopped, ensure aborted uploads can be removed
     const out = fs.createWriteStream(file, { flags: 'a' })
+    let keeping_user_session_live
     try {
+        if (save_partial_upload) keeping_user_session_live = _keep_user_session_live(req)
         await helpers.promise_WriteStream_pipe(req, out)
         const { size } = await helpers.fsP.stat(file)
         if (size === 0) throw "empty content";
@@ -100,6 +109,8 @@ const _body_to_file = async (req, file_id, save_partial_upload) => {
             fs.unlink(file, _ => {})
         }
         throw err;
+    } finally {
+        if (keeping_user_session_live) clearInterval(keeping_user_session_live)
     }
 }
 
