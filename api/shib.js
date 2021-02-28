@@ -31,7 +31,7 @@ const get_attrs = (Cookie) => (new Promise((resolve, reject) => {
                 reject()
             }
         })
-        resp.on('error', (e) => reject(e))
+        resp.on('error', (e) => reject(e))
     })
 }))
 
