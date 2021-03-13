@@ -20,6 +20,7 @@ Vue.createApp({
             file_name: undefined, file_size: undefined,
         },
         info: undefined,
+        dragging_over_drop_zone: false,
     }),
     computed: {
         expiration() {
@@ -41,6 +42,14 @@ Vue.createApp({
     methods: {
         file_selected(event) {
             this.send_file({ file: event.target.files[0], id: random_id() });
+        },
+        ondrop(ev) {
+            if (ev.dataTransfer.files.length > 1) {
+                alert("Le téléversement multi-fichier n'est pas supporté.")
+            } else {
+                let file = ev.dataTransfer.files[0];
+                if (file) this.send_file({ file: file, id: random_id() });
+            }
         },
         upload_abort() {
             journal({ action: 'upload_abort', state: this.uploading.xhr ? 'xhr' : this.uploading.trying_to_continue ? 'trying_to_continue' : 'weird' });

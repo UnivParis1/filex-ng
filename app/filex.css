@@ -93,7 +93,7 @@ form input {
 
 label.for-input-file-upload {
     display: block;
-    font-size: 18px;
+    font-size: 17px;
     border: 2px solid #205599;
     height: 35px;
     line-height: 35px;
@@ -103,11 +103,12 @@ label.for-input-file-upload {
     color: #eee;
 
     width: 30%;
-    min-width: 300px;
-    padding: 6px 8px;
-    margin-top: 15px;
+    min-width: 280px;
+    padding: 4px 8px;
+    margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -184,4 +185,42 @@ form.uploading {
     padding : 10px;
     margin-bottom: 10px; 
     border-left: 1px dotted #AAA;
+}
+
+.drop-zone { 
+    margin: 25px 18px 2px;
+    border: dashed #777 1px;
+    border-bottom: dashed #777 2px;
+    background:white ;
+    height: 92px;
+}
+
+.drop-zone:hover, .drop-zone.dragging_over_drop_zone  {
+    background: #fff2bb70;
+    border-color: blue; 
+}
+
+.drop-zone:hover:after, .drop-zone.dragging_over_drop_zone:after  {
+    content:"Glissez le fichier ici, ou utilisez le bouton...";
+    padding-left:15px;
+    color: #00326E;
+    font-size:16px;
+    font-style:italic;
+    font-weight: 400;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* ensure we can drop over the button inside drop-zone (https://stackoverflow.com/a/14027995/3005203) */
+.dragging_over_drop_zone * {
+    pointer-events: none;
+}
+
+@media screen and (max-width: 700px) {
+    label.for-input-file-upload {
+        font-size: 15px;
+        width: initial;
+        min-width: 250px;
+        margin: 10px 10px 50px 10px;
+        height: 30px;
+    }
 }

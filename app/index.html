@@ -43,13 +43,15 @@
             </span>
         </p>
 
-        <label class="for-input-file-upload">
+        <div class="drop-zone" @drop.prevent="ondrop" @dragover.prevent="" @dragenter="dragging_over_drop_zone = true" @dragleave="dragging_over_drop_zone = false" :class="{ dragging_over_drop_zone: dragging_over_drop_zone }">
+          <label class="for-input-file-upload">
             <svg aria-hidden="true" focusable="false" data-icon="location-arrow" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path d="M444.52 3.52L28.74 195.42c-47.97 22.39-31.98 92.75 19.19 92.75h175.91v175.91c0 51.17 70.36 67.17 92.75 19.19l191.9-415.78c15.99-38.39-25.59-79.97-63.97-63.97z"></path>
             </svg>
             Sélectionnez le fichier à déposer
             <input type="file" @change="file_selected" style="display: none" :disabled="!!uploading.xhr">
-        </label>
+          </label>
+        </div>
         <input type="submit" value="Envoyer" style="display: none">
     </form>
     <div v-if="uploading.xhr || uploading.trying_to_continue">
