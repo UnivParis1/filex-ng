@@ -48,7 +48,7 @@ Exemple d'utilisation : fournir les numérisations de documents avec une durée 
 
 # Démonstration
 
-L'application installée à l'université Paris 1 Panthéon-Sorbonne est accessible avec authentification Shibboleth via la fédération Renater :
+L'application installée à l'université Paris 1 Panthéon-Sorbonne est accessible avec authentification Shibboleth via la fédération Education-Recherche Renater :
 
 https://filex-ng.univ-paris1.fr/Shibboleth.sso/Login
 
@@ -74,6 +74,8 @@ npm install
 
 [conf.js](https://github.com/UnivParis1/filex-ng/blob/master/conf.js)
 
+
+Si vous utilisez nginx en frontal, n'oubliez de mettre `client_max_body_size 0` pour autoriser les gros uploads (testé  Go
 
 # Démarrage
 
@@ -102,6 +104,16 @@ Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
+```
+
+# Divers
+
+## Quota utilisé par personne
+
+Personnes ayant utilisées plus de 5G :
+
+```
+db.uploads.aggregate([ { $match: { "partial_uploader_file_id": { $exists: false }, deleted: false } }, { $group: { "_id": "$uploader.eppn", count: {$sum: 1}, total_size: {$sum: '$size' } } }  ]).map(e => e).filter(e => e.total_size > 5e9).map(e => [ e._id, "" + (e.total_size /1e9) + "GB" ])
 ```
 
 # Licenses
