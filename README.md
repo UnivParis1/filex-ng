@@ -116,6 +116,12 @@ Personnes ayant utilisées plus de 5G :
 db.uploads.aggregate([ { $match: { "partial_uploader_file_id": { $exists: false }, deleted: false } }, { $group: { "_id": "$uploader.eppn", count: {$sum: 1}, total_size: {$sum: '$size' } } }  ]).map(e => e).filter(e => e.total_size > 5e9).map(e => [ e._id, "" + (e.total_size /1e9) + "GB" ])
 ```
 
+## Derniers gros uploads
+
+```
+db.uploads.find({ deleted: false, size: { $gt: 100e6 } }).sort({ uploadTimestamp: -1 }).limit(40).map(e => "" + e.uploadTimestamp.toLocaleString() + ": " + (e.size / 1e6) + "MB " + e.uploader.mail + " " + e.filename)
+```
+
 # Licenses
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
