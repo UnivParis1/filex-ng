@@ -55,7 +55,7 @@ exports.get__before_download = async (query, doc, res) => {
     <p>Vous avez demandé le fichier <b>${doc.filename || '<i>sans nom</i>'}</b></p>
     <p><b><i>Informations :</i></b></p>
         <ul>
-        <li><b>Taille</b> : ${helpers.formatBytes(doc.size, 2)} Octets</li>
+        <li><b>Taille</b> : ${helpers.formatBytes(doc.size, 2)}</li>
         <li><b>Publié le</b> : ${doc.uploadTimestamp.toLocaleString()}</li>
         <li><b>Disponible jusqu'au</b> : ${doc.expireAt.toLocaleString()}</li>
         <li><b>Publié par</b> : ${doc.uploader.mail}</li>
