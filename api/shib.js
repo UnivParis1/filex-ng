@@ -51,8 +51,8 @@ exports.may_create_session = async (req, res, next) => {
 
 exports.ensure_connected = async (req, res, next) => {
     if (!req.session.user) {
-        //console.log("no shib session, redirecting")
-        res.redirect('/Shibboleth.sso/Login')
+        //console.log("no shib session, redirecting", req.originalUrl)
+        res.redirect('/Shibboleth.sso/Login?target=' + encodeURIComponent(req.originalUrl))
         return
     }
     next()
