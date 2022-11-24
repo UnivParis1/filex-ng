@@ -170,14 +170,14 @@ exports.handle_trusted_upload = express_async(async (req, res) => {
         if (!files.upload) throw "invalid form trusted upload: expected file named 'upload'";
         if (!fields.owner) throw "missing 'owner' parameter"
 
-        const { path, name, type, size } = files.upload
+        const { filepath, originalFilename, mimetype, size } = files.upload
 
-        await helpers.fsP.copyFile(path, get_file(file_id));
+        await helpers.fsP.copyFile(filepath, get_file(file_id));
 
         // cleanup
-        _.each(files, file => helpers.fsP.unlink(file.path))
+        _.each(files, file => helpers.fsP.unlink(file.filepath))
 
-        params = { ...fields, filename: name, type, size }
+        params = { ...fields, filename: originalFilename, type: mimetype, size }
         console.log(params)
     } else {
         if (!req.query.owner) throw "missing 'owner' parameter"
