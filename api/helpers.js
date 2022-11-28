@@ -109,9 +109,18 @@ exports.promise_ReadStream_pipe = (readStream, prepare_response) => (
     })
 )
 
-exports.form_parse = (req, options) => (
+exports.form_parse = (req, options, file_names) => (
     new Promise((resolve, reject) => {
-        formidable(options).parse(req, (err, fields, files) => {
+        const form = formidable(options)
+        form.onPart = function (part) {
+            if (!file_names.includes(part.name)) {
+                // we want it to be a "field" (cf https://github.com/node-formidable/formidable/issues/875 )
+                // even if it has a mimetype
+                delete part.mimetype
+            }
+            form._handlePart(part);
+        }
+        form.parse(req, (err, fields, files) => {
             if (err) {
                 reject(err);
             } else {
