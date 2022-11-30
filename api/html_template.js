@@ -42,11 +42,6 @@ exports.static = async (req, res) => {
 exports.get__before_download = async (query, doc, res) => {
     res.set('Content-Type', 'text/html');
 
-    if (doc.deleted) {
-        res.end(`Le fichier que vous avez demandé n'est plus disponible au téléchargement`)
-        return
-    }
-
     res.end(beginning(doc.password ? '' :
     `<meta http-equiv="refresh" content="5; URL=${get_url(doc._id)}&auto=1">`
 ) + `

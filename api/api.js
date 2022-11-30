@@ -202,6 +202,13 @@ exports.handle_download = express_async(async (req, res) => {
 
     const doc = await db.get_upload(file_id)
     if (!doc) throw "unknown id"
+
+    if (doc.deleted) {
+        res.set('Content-Type', 'text/html');
+        res.end(`Le fichier que vous avez demandé n'est plus disponible au téléchargement`)
+        return
+    }
+
     if (doc.password ? doc.password === req.query.password : req.query.auto) {
         const input = fs.createReadStream(get_file(file_id))
         try {
