@@ -42,6 +42,7 @@
               <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
             </span>
         </p>
+        <p><label><input type="checkbox" v-model="upload.hide_uploader">Cacher mon email</label></p>
 
         <div class="drop-zone" @drop.prevent="ondrop" @dragover.prevent="" @dragenter="dragging_over_drop_zone = true" @dragleave="dragging_over_drop_zone = false" :class="{ dragging_over_drop_zone: dragging_over_drop_zone }">
           <label class="for-input-file-upload">

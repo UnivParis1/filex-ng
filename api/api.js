@@ -60,7 +60,7 @@ const _save_doc = async (req, params, partial_upload) => {
     }
 
     let doc = { 
-        ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'password', 'uploader'),
+        ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'hide_uploader', 'password', 'uploader'),
 
         uploadTimestamp: helpers.now(),
         expireAt: helpers.addDays(helpers.now(), partial_upload ? 1 : params.daykeep || 1),

@@ -53,7 +53,9 @@ exports.get__before_download = async (query, doc, res) => {
         <li><b>Taille</b> : ${helpers.formatBytes(doc.size, 2)}</li>
         <li><b>Publié le</b> : ${doc.uploadTimestamp.toLocaleString()}</li>
         <li><b>Disponible jusqu'au</b> : ${doc.expireAt.toLocaleString()}</li>
+` + (doc.hide_uploader ? `` : `
         <li><b>Publié par</b> : ${doc.uploader.mail}</li>
+`) + `
     </ul>
     
 ` + (doc.password ? 
