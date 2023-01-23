@@ -1,4 +1,5 @@
 Vue.createApp({
+    components: { File_options },
     created() {
         this.get_file(document.location.hash.replace(/^#/, ''))
     },
