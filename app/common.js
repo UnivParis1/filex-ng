@@ -4,6 +4,14 @@ function array_sum(arr) {
     return r;
 }
 
+function pick(o, keys) {
+    let r = {};
+    for (const key of keys) {
+        if (key in o) r[key] = o[key]
+    }
+    return r
+}
+
 function exception_to_null(f) {
     try { return f() } catch (e) { return null }
 }
@@ -15,6 +23,14 @@ function encode_params(params) {
         if (params[k]) {
             r.push(k + "=" + encodeURIComponent(params[k]));
         }
+    }
+    return r.join('&');
+}
+function encode_params_(params, default_value) {
+    var k;
+    var r = [];
+    for (k in params) {
+        r.push(k + "=" + encodeURIComponent(params[k] || default_value));
     }
     return r.join('&');
 }
@@ -154,3 +170,33 @@ function try_to_continue_upload(state) {
     })
 }
 
+const File_options = {
+    template: `
+    <p><label><input type="checkbox" v-model="file.notify_on_download">Recevoir un avis de réception à chaque téléchargement</label></p>
+    <p><label><input type="checkbox" v-model="file.notify_on_delete">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
+    <p><label><input type="checkbox" v-model="file.with_password">Utiliser un mot de passe pour le téléchargement</label>
+        <span v-if="file.with_password">:
+          <input type="password" v-model="file.password" size="15" maxlength="30"><br>
+          <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
+        </span>
+    </p>
+    <p><label><input type="checkbox" v-model="file.hide_uploader">Cacher mon email</label></p>
+`,
+    props: ['file'],
+    emits: ['modified_options'],
+    data() {
+        return { file_orig: { ...this.file } }
+    },
+    watch: {
+        file: {
+            handler() { 
+                const option_attrs = ['notify_on_download', 'notify_on_delete', 'with_password', 'password', 'hide_uploader']
+                const modified_options = option_attrs.filter((attr) => (
+                    (this.file[attr] || this.file_orig[attr]) && this.file[attr] != this.file_orig[attr]
+                ))
+                this.$emit('modified_options', modified_options)
+            },
+            deep: true,
+        },
+    },
+}

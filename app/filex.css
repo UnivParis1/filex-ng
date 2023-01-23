@@ -85,7 +85,7 @@ select {
     font-size: 15px;
 }
 
-form input {
+dd input, form input {
     height: 16px;
     margin-right: 15px;
     padding: 5px;

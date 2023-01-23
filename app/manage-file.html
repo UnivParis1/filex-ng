@@ -15,6 +15,10 @@
       <dt>Taille</dt> <dd>{{formatBytes(file.size, 2)}}</dd>
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
       <dt>Adresse de téléchargement</dt> <dd><a :href="file.get_url">{{file.get_url}}</a></dd>
+      <dt>Options</dt> <dd>
+        <File_options :file="file" @modified_options="modified_options = $event"></File_options>
+        <button @click="save_file_options" v-if="modified_options.length">Enregister les modifications des options</button>
+    </dd>
       </dl>
       <div v-if="file.downloads.length">
         <h3>Liste des téléchargements</h3>

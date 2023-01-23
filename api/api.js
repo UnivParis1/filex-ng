@@ -43,14 +43,21 @@ exports.delete_user_file = express_async(async (req, res) => {
 
 exports.modify_user_file = express_async(async (req, res) => {
     const doc = await db.user_file(req.session.user, req.params.id)
+    let subdoc = {}
+    for (const attr of ['notify_on_download', 'notify_on_delete', 'hide_uploader', 'password']) {
+        if (attr in req.query) {
+            const val = req.query[attr]
+            subdoc[attr] = attr === 'password' ? val : !!val
+        }
+    }
     if (req.query.extend_lifetime) {
         const user_info = await various.get_user_info(req.session.user)
-        await db.set_upload(doc, {
-            expireAt: helpers.addDays(helpers.now(), user_info.max_daykeep),
-        })
-    } else {
-        throw "unknown action"
+        subdoc.expireAt = helpers.addDays(helpers.now(), user_info.max_daykeep)
     }
+    if (_.isEmpty(subdoc)) {
+        throw "nothing to do"
+    }
+    await db.set_upload(doc, subdoc)
     res.json({ ok: true })
 })
 

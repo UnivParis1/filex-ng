@@ -34,15 +34,7 @@
                 {{nb}}
               </option>
         </select> Jours</p>
-        <p><label><input type="checkbox" v-model="upload.notify_on_download">Recevoir un avis de réception à chaque téléchargement</label></p>
-        <p><label><input type="checkbox" v-model="upload.notify_on_delete">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
-        <p><label><input type="checkbox" v-model="upload.with_password">Utiliser un mot de passe pour le téléchargement</label>
-            <span v-if="upload.with_password">:
-              <input type="password" v-model="upload.password" size="15" maxlength="30"><br>
-              <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
-            </span>
-        </p>
-        <p><label><input type="checkbox" v-model="upload.hide_uploader">Cacher mon email</label></p>
+        <File_options :file="upload"></File_options>
 
         <div class="drop-zone" @drop.prevent="ondrop" @dragover.prevent="" @dragenter="dragging_over_drop_zone = true" @dragleave="dragging_over_drop_zone = false" :class="{ dragging_over_drop_zone: dragging_over_drop_zone }">
           <label class="for-input-file-upload">
