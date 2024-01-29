@@ -89,6 +89,10 @@ app.use(express.static(__dirname + '/app'))
 app.get('/journal', (_req, res) => res.json({ ok: true }))
 
 const server = app.listen(conf.port, service_reload.may_write_PIDFile)
+
+// allow uploads of more than 5 minutes (ie revert to Node.js < 18 behaviour)
+server.requestTimeout = 0;
+
 service_reload.may_handle_reload(server)
 
 various.remove_expired()
