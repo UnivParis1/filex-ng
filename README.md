@@ -113,7 +113,7 @@ WantedBy=multi-user.target
 Personnes ayant utilisées plus de 5G :
 
 ```
-db.uploads.aggregate([ { $match: { "partial_uploader_file_id": { $exists: false }, deleted: false } }, { $group: { "_id": "$uploader.eppn", count: {$sum: 1}, total_size: {$sum: '$size' } } }  ]).map(e => e).filter(e => e.total_size > 5e9).map(e => [ e._id, "" + (e.total_size /1e9) + "GB" ])
+db.uploads.aggregate([ { $match: { "partial_uploader_file_id": { $exists: false }, deleted: false } }, { $group: { "_id": "$uploader.eppn", count: {$sum: 1}, total_size: {$sum: '$size' } } }  ]).toArray().filter(e => e.total_size > 5e9).map(e => [ e._id, "" + (e.total_size /1e9) + "GB" ])
 ```
 
 ## Derniers gros uploads
