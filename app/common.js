@@ -172,15 +172,15 @@ function try_to_continue_upload(state) {
 
 const File_options = {
     template: `
-    <p><label><input type="checkbox" v-model="file.notify_on_download">Recevoir un avis de réception à chaque téléchargement</label></p>
-    <p><label><input type="checkbox" v-model="file.notify_on_delete">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
-    <p><label><input type="checkbox" v-model="file.with_password">Utiliser un mot de passe pour le téléchargement</label>
+    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.notify_on_download">Recevoir un avis de réception à chaque téléchargement</label></p>
+    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.notify_on_delete">Recevoir un récapitulatif des téléchargements lorsque le fichier aura expiré</label></p>
+    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.with_password">Utiliser un mot de passe pour le téléchargement</label>
         <span v-if="file.with_password">:
           <input type="password" v-model="file.password" size="15" maxlength="30"><br>
           <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
         </span>
     </p>
-    <p><label><input type="checkbox" v-model="file.hide_uploader">Cacher mon email</label></p>
+    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.hide_uploader">Cacher mon email</label></p>
 `,
     props: ['file'],
     emits: ['modified_options'],

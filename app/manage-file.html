@@ -10,7 +10,7 @@
       <dl>
       <dt>Déposé le</dt><dd>{{dateToLocaleString(file.uploadTimestamp)}}</dd>
       <dt>Expire le</dt><dd>{{dateToLocaleString(file.expireAt)}}
-        <button style="margin-left: 0.5rem" @click="extend_lifetime">Prolonger de {{info && info.max_daykeep}} jours à partir de maintenant</button>
+        <button v-if="!file.deleted" style="margin-left: 0.5rem" @click="extend_lifetime">Prolonger de {{info && info.max_daykeep}} jours à partir de maintenant</button>
       </dd>
       <dt>Taille</dt> <dd>{{formatBytes(file.size, 2)}}</dd>
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
