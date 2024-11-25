@@ -4,7 +4,7 @@ const helpers = require('./helpers')
 
 const clamdscan = async (file) => {
     try {
-        await helpers.popen('', 'clamdscan', ['--no-summary', file])
+        await helpers.popen('', 'clamdscan', ['--fdpass', '--no-summary', file])
     } catch (err) {
         return (err.match(/: (.*)/) || [])[1]
     }
