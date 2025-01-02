@@ -9,7 +9,7 @@ Vue.createApp({
         upload: {
             daykeep: 15,
             notify_on_download: false, notify_on_delete: false, with_password: false, hide_uploader: false,
-            password: undefined,
+            password: undefined, require_auth: false,
             file: undefined,
         },
         uploading: {
@@ -69,6 +69,7 @@ Vue.createApp({
                 'notify_on_download': this.upload.notify_on_download,
                 'notify_on_delete': this.upload.notify_on_delete,
                 'hide_uploader': this.upload.hide_uploader,
+                'require_auth': this.upload.require_auth,
                 'password': this.upload.with_password && this.upload.password,
                 'id': state.id,
             };

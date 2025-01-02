@@ -110,6 +110,6 @@ exports.files_download_count = async (ids) => (
 exports.file_downloads = async (id) => (
     (await collection('downloads')).find(
         { doc: _id(id) },
-        { projection: { ip: 1, timestamp: 1, bytes: 1, _id: 0 }},
+        { projection: { ip: 1, timestamp: 1, bytes: 1, _id: 0, who: 1 }},
     ).toArray()
 )

@@ -24,11 +24,13 @@
         <h3>Liste des téléchargements</h3>
         <table>
             <tr>
+                <th v-if="file.require_auth">Qui</th>
                 <th>Adresse</th>
                 <th>Date</th>
                 <th>Annulé</th>
             </tr>
             <tr v-for="download in file.downloads">
+                <td v-if="file.require_auth">{{download.who && download.who.mail}}</td>
                 <td>{{download.ip}}</td>
                 <td>{{dateToLocaleString(download.timestamp)}}</td>
                 <td>{{download.bytes !== file.size ? 'Oui' : 'Non'}}</td>

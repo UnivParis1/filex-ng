@@ -71,7 +71,8 @@ app.use('/trusted', require_trusted)
 app.put('/trusted/upload', api.handle_trusted_upload)
 app.post('/trusted/upload', api.handle_trusted_upload)
 
-app.get('/get', api.handle_download) 
+app.get('/get', api.handle_download)
+app.get('/get-with-auth', get_session, shib.may_create_session, shib.ensure_connected, api.handle_download)
   
 app.get([/^\/$/, '/manage', '/manage-file'], get_session, shib.may_create_session, shib.ensure_connected, html_template.static)
 

@@ -44,7 +44,7 @@ exports.delete_user_file = express_async(async (req, res) => {
 exports.modify_user_file = express_async(async (req, res) => {
     const doc = await db.user_file(req.session.user, req.params.id)
     let subdoc = {}
-    for (const attr of ['notify_on_download', 'notify_on_delete', 'hide_uploader', 'password']) {
+    for (const attr of ['notify_on_download', 'notify_on_delete', 'hide_uploader', 'password', 'require_auth']) {
         if (attr in req.query) {
             const val = req.query[attr]
             subdoc[attr] = attr === 'password' ? val : !!val
@@ -67,7 +67,7 @@ const _save_doc = async (req, params, partial_upload) => {
     }
 
     let doc = { 
-        ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'hide_uploader', 'password', 'uploader'),
+        ..._.pick(params, '_id', 'size', 'filename', 'type', 'notify_on_download', 'notify_on_delete', 'hide_uploader', 'password', 'require_auth', 'uploader'),
 
         uploadTimestamp: helpers.now(),
         expireAt: helpers.addDays(helpers.now(), partial_upload ? 1 : params.daykeep || 1),
@@ -211,6 +211,13 @@ exports.handle_download = express_async(async (req, res) => {
         res.set('Content-Type', 'text/html');
         res.end(`Le fichier que vous avez demandé n'est plus disponible au téléchargement`)
         return
+    }
+
+    if (doc.require_auth) {
+        if (!req.session?.user) {
+            res.redirect('/get-with-auth?' + new URLSearchParams(req.query))
+            return
+        }
     }
 
     if (doc.password ? doc.password === req.query.password : req.query.auto) {

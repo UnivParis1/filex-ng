@@ -180,6 +180,7 @@ const File_options = {
           <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
         </span>
     </p>
+    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.require_auth">Exiger une authentification pour télécharger</label></p>
     <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.hide_uploader">Cacher mon email</label></p>
 `,
     props: ['file'],
@@ -190,7 +191,7 @@ const File_options = {
     watch: {
         file: {
             handler() { 
-                const option_attrs = ['notify_on_download', 'notify_on_delete', 'with_password', 'password', 'hide_uploader']
+                const option_attrs = ['notify_on_download', 'notify_on_delete', 'with_password', 'password', 'require_auth', 'hide_uploader']
                 const modified_options = option_attrs.filter((attr) => (
                     (this.file[attr] || this.file_orig[attr]) && this.file[attr] != this.file_orig[attr]
                 ))

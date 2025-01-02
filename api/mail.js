@@ -64,7 +64,7 @@ exports.notify_on_download = async (req, doc) => {
     const client_ip = conf.request_to_ip(req)
     const client_host = await helpers.dns_reverse(client_ip).catch(_ => "")
     const subject = `Système de transfert de fichier : ${doc.filename} téléchargé`
-    const text = `Le fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été téléchargé.
+    const text = `Le fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été téléchargé${req.session?.user ? ` par ${req.session.user?.mail}` : ''}.
 
 Pour informations :
 
@@ -80,7 +80,7 @@ Merci d'avoir utilisé le service d'échange de fichier.
 exports.notify_on_delete = (doc, downloads) => {
     const subject = `Système de transfert de fichier : ${doc.filename} supprimé`
     const downloads_txt = downloads.map(download => (
-        `- ${download.ip} le ${helpers.format_date(download.timestamp)}\n`
+        `- ${download.who ? `${download.who.mail} (${download.ip})` : download.ip} le ${helpers.format_date(download.timestamp)}\n`
     )).join('')
     const text = `Votre fichier "${doc.filename}" déposé le ${helpers.format_date(doc.uploadTimestamp)} a été supprimé.
 

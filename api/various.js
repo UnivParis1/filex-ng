@@ -42,6 +42,7 @@ exports.log_download = async (req, doc, bytes) => {
         ip: conf.request_to_ip(req),
         user_agent: req.headers['user-agent'],
     }
+    if (req.session?.user) log.who = req.session?.user
     await db.insert_download(log)
 }
 
