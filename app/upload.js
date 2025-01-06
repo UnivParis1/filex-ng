@@ -9,7 +9,7 @@ Vue.createApp({
         upload: {
             daykeep: 15,
             notify_on_download: false, notify_on_delete: false, with_password: false, hide_uploader: false,
-            password: undefined, require_auth: false,
+            password: undefined, require_auth: true,
             file: undefined,
         },
         uploading: {
