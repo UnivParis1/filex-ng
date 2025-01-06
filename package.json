@@ -5,6 +5,7 @@
   "main": "index.js",
   "author": "Pascal Rigaux",
   "dependencies": {
+    "bson": "^6.10.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "formidable": "^2.0.1",

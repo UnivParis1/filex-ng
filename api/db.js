@@ -1,6 +1,7 @@
 const mongodb = require('mongodb');
 const helpers = require('./helpers');
 const conf = require('../conf');
+const { UUID } = require('bson');
 
 let client_cache;
 
@@ -17,9 +18,14 @@ const get_client = () => (
 );
 
 
-const _id = (id) => new mongodb.ObjectID(id)
+const _id = (id) => (
+    typeof id === 'object' ? id :
+    id?.match(/^\w{24}$/) ? new mongodb.ObjectID(id) : 
+    id?.match(/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/) ? new UUID(id) :
+    helpers.throw_("invalid id")
+)
 
-exports.new_id = () => _id(null)
+exports.new_id = () => new UUID()
 
 const collection = async (collection_name) => (
     (await get_client()).collection(collection_name)

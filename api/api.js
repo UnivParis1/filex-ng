@@ -203,9 +203,6 @@ exports.handle_download = express_async(async (req, res) => {
     if (!file_id) {
         throw "missing id parameter"
     }
-    if (!file_id.match(/^\w{24}$/)) {
-        throw "invalid id"
-    }
 
     const doc = await db.get_upload(file_id)
     if (!doc) throw "unknown id"
