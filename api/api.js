@@ -131,11 +131,9 @@ const _upload_response = (req, res, doc, prefer_json) => {
     }
 }
 
-const throw_ = (err) => { throw err }
-
 const _get_partial_upload = async (req) => (
     await db.get_upload_({ uploader: req.session.user, partial_uploader_file_id: req.query.id }) ||
-        throw_("partial_upload_impossible")
+        helpers.throw_("partial_upload_impossible")
 )
 
 exports.get_partial_upload_size = express_async(async (req, res) => {

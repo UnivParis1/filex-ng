@@ -23,6 +23,8 @@ exports.addDays = function (date, days) {
     return r;
 }
 
+exports.throw_ = (err) => { throw err }
+
 exports.format_date = (date) => (
     date.toLocaleString('fr-FR', { hour12: false })
 )
