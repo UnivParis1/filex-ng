@@ -215,6 +215,16 @@ form.uploading {
     pointer-events: none;
 }
 
+.button {
+  color: white;
+  background: #205599;
+  border-radius: 5px;
+  padding: 7px 10px 7px;
+  text-decoration: none;
+  vertical-align: top;
+  display: inline-block;
+}
+
 @media screen and (max-width: 700px) {
     label.for-input-file-upload {
         font-size: 15px;
