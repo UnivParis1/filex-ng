@@ -16,6 +16,7 @@
     </div>
     <table v-if="files.length" style="margin-left: 1rem">
         <tr>
+            <th></th>
             <th>Nom</th>
             <th>Taille</th>
             <th>Déposé le</th>
@@ -23,9 +24,12 @@
             <th>Téléchargé</th>
         </tr>
         <tr v-for="file in files">
-            <td><a :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">
-                <span v-if="file.filename">{{file.filename}}</span><i v-else>aucun nom</i>
+            <td><a class="button" :title="'Gérer ' + file.filename" :href="'/manage-file#' + file._id" :class="{ is_deleted: file.deleted }">
+                <Icon_edit></Icon_edit>
             </a></td>
+            <td>
+                <span v-if="file.filename">{{file.filename}}</span><i v-else>aucun nom</i>
+            </td>
             <td>{{formatBytes(file.size, 2)}}</td>
             <td>{{dateToLocaleString(file.uploadTimestamp)}}</td>
             <td>{{dateToLocaleString(file.expireAt)}}</td>

@@ -2,6 +2,7 @@ Vue.createApp({
     created() {
         this.get_files();
     },
+    components: { Icon_edit },
     data: () => ({
         files: undefined,
         hide_deleted: true,
