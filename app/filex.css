@@ -224,6 +224,10 @@ form.uploading {
   vertical-align: top;
   display: inline-block;
 }
+.button svg {
+    vertical-align: text-top;
+    fill: white;
+}
 
 @media screen and (max-width: 700px) {
     label.for-input-file-upload {

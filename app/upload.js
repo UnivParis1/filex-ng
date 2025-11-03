@@ -1,7 +1,7 @@
 const daykeep_opts = [1,2,3,4,5,6,7,14,15,21,30,45];
 
 Vue.createApp({
-    components: { File_options },
+    components: { File_options, Icon_edit },
     created() {
         this.get_user_info()
     },
