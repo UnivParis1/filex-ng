@@ -42,7 +42,8 @@ Exemple d'utilisation : fournir les numérisations de documents avec une durée 
 
 ## Sur demande de l'utilisateur
 
-* téléchargement protégé par un mot de passe 
+* téléchargement protégé par un mot de passe
+* téléchargement protégé par Shibboleth
 * avis de réception à chaque téléchargement
 * récapitulatif des téléchargements à l'expiration du fichier
 
