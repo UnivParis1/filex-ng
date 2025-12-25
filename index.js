@@ -95,6 +95,7 @@ const server = app.listen(conf.port, service_reload.may_write_PIDFile)
 server.requestTimeout = 0;
 
 service_reload.may_handle_reload(server)
+service_reload.handle_sigterm(server)
 
 various.remove_expired()
 setInterval(various.remove_expired, helpers.minutes_to_ms(5))

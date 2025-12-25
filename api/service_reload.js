@@ -40,4 +40,22 @@ module.exports = {
             process.on('SIGHUP', _ => close_spawn_and_graceful_exit(server, PIDFile()))
         }
     },
+    handle_sigterm(server) {
+        let stopping
+        process.on('SIGTERM', () => {
+            if (!stopping) {
+                console.info('Stopping...')
+                server.close((err) => {
+                    // all requests are now finished
+                    if (err) console.error("Stopping HTTP server failed", err)
+                    console.info('Stopped')
+                    process.exit(0)
+                })
+                stopping = true // avoir errors if SIGTERM is received multiple times
+                // http server is not listening anymore, but requests created before can still be in progress.
+                // NB: it won't work nicely if there are HTTP KeepAlive connections. We expect the reverse proxy NOT to use HTTP KeepAlive
+            }
+        })
+
+    }
 }
