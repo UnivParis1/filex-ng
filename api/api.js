@@ -93,7 +93,7 @@ const _save_partial_upload = async (req, file_id) => {
 
 const _keep_user_session_live = (req) => (
     req.session && setInterval(_ => {
-        console.log("keeping_user_session_live", req.session)
+        //console.log("keeping_user_session_live", req.session)
         req.session.save(_ => {})
     }, conf.session_store.ttl / 2 * 1000)
 )
