@@ -73,10 +73,10 @@ ${doc_info(doc)}
 
 Merci d'avoir utilisé le service d'échange de fichier.
 `
-    send({ to: doc.uploader.mail, subject, text })
+    await send({ to: doc.uploader.mail, subject, text })
 }
 
-exports.notify_on_delete = (doc, downloads) => {
+exports.notify_on_delete = async (doc, downloads) => {
     const subject = `Système de transfert de fichier : ${doc.filename} supprimé`
     const downloads_txt = downloads.map(download => (
         `- ${download.who ? `${download.who.mail} (${download.ip})` : download.ip} le ${helpers.format_date(download.timestamp)}\n`
@@ -95,5 +95,5 @@ ${doc_info(doc)}
 
 Merci d'avoir utilisé le service d'échange de fichier.
 `
-    send({ to: doc.uploader.mail, subject, text })
+    await send({ to: doc.uploader.mail, subject, text })
 }
