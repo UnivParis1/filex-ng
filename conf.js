@@ -28,6 +28,7 @@ let conf = {
         path: '/tmp',
         ttl: 10 /* minutes */ * 60, // inactivity time (uploading a file postpones expiration)
     },
+    trust_proxy: ['loopback'], // add IP addresses if needed
     
     mail: {
         from: 'Université Paris 1 (ne pas répondre) <noreply@univ.fr>',

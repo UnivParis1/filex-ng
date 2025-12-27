@@ -57,6 +57,8 @@ const require_admin = async (req, res, next) => {
     res.status(401).json({ ok: false, err })
 }
 
+app.set('trust proxy', conf.trust_proxy)
+
 app.use('/user', get_session, shib.may_create_session, require_session)
 app.put('/user/upload', api.handle_upload)
 app.post('/user/upload', api.handle_upload)
