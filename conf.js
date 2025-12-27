@@ -1,4 +1,3 @@
-const sendmailTransport = require('nodemailer-sendmail-transport');
 const helpers = require('./api/helpers')
 
 let conf = {
@@ -33,7 +32,7 @@ let conf = {
     mail: {
         from: 'Université Paris 1 (ne pas répondre) <noreply@univ.fr>',
         intercept: '', //'pascal.rigaux@univ.fr',
-        transport: sendmailTransport({ path: '/usr/sbin/sendmail' }), // give sendmail with full path (since PATH may not have /usr/sbin/)
+        transport: { host: "smtp.univ.fr", port: 25 },
     },
 
     request_to_ip: req => req.headers['x-forwarded-for'] || req.connection.remoteAddress,
