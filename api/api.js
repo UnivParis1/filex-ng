@@ -163,7 +163,7 @@ exports.handle_upload = express_async(async (req, res) => {
     const size = await _body_to_file(req, file_id, true)
     if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"
     const doc = await _save_doc(req, { ...req.query, size, uploader: req.session.user, _id: file_id })
-    mail.notify_on_upload(doc) // do not wait for it to return
+    await mail.notify_on_upload(doc)
     _upload_response(req, res, doc, true)
 })
 

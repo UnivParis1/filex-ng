@@ -9,7 +9,7 @@ const mailTransporter = nodemailer.createTransport(conf.mail.transport)
 // sendMail does not return a promise, it will be done in background. We simply log errors
 // params example:
 // { from: 'xxx <xxx@xxx>', to: 'foo@bar, xxx@boo', subject: 'xxx', text: '...', html: '...' }
-const send = (params) => {
+const send = async (params) => {
     params = _.assign({ from: conf.mail.from }, params)
     if (conf.mail.intercept) {
         const cc = (params.cc || '').toString()
@@ -17,13 +17,12 @@ const send = (params) => {
         params.to = conf.mail.intercept
         delete params.cc
     }
-    mailTransporter.sendMail(params, (error, info) => {
-        if (error) {
-            console.log(error)
-        } else {
-            console.log('Mail sent: ', info)
-        }
-    })
+    try {
+        const info = await mailTransporter.sendMail(params)
+        console.log('Mail sent: ', info)
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const doc_info = (doc) => (
@@ -33,7 +32,7 @@ Déposé le : ${helpers.format_date(doc.uploadTimestamp)}
 Disponible jusqu'au : ${helpers.format_date(doc.expireAt)}`
 )
 
-exports.notify_on_upload = (doc) => {
+exports.notify_on_upload = async (doc) => {
     const subject = `Système de transfert de fichier : ${doc.filename} déposé`
     const text = `Vous venez de déposer le fichier : ${doc.filename}
 
@@ -57,7 +56,7 @@ Options :
 
 Merci d'avoir utilisé le service d'échange de fichier.
 `
-    send({ to: doc.uploader.mail, subject, text })
+    await send({ to: doc.uploader.mail, subject, text })
 }
 
 exports.notify_on_download = async (req, doc) => {
