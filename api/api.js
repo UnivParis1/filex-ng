@@ -171,15 +171,17 @@ exports.handle_trusted_upload = express_async(async (req, res) => {
     const file_id = db.new_id()
     let params;
     if (/^multipart[/]form-data/i.test(req.headers['content-type'])) {
-        const { fields, files } = await helpers.form_parse(req, undefined, ['upload'])
+        const uploadDir = conf.upload_dir + "/tmp"
+        await helpers.mkdir_if_needed(uploadDir)
+        const { fields, files } = await helpers.form_parse(req, { uploadDir }, ['upload'])
         if (!files.upload) throw "invalid form trusted upload: expected file named 'upload'";
         if (!fields.owner) throw "missing 'owner' parameter"
 
-        const { filepath, originalFilename, mimetype, size } = files.upload
+        const { filepath, originalFilename, mimetype, size } = helpers.get_delete(files, 'upload')
 
-        await helpers.fsP.copyFile(filepath, get_file(file_id));
+        await helpers.fsP.rename(filepath, get_file(file_id));
 
-        // cleanup
+        // cleanup the other files, if any:
         _.each(files, file => helpers.fsP.unlink(file.filepath))
 
         params = { ...fields, filename: originalFilename, type: mimetype, size }

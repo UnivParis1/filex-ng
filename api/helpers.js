@@ -5,12 +5,15 @@ const util = require('util')
 const formidable = require('formidable')
 const spawn = require('child_process').spawn;
 
-exports.fsP = {
+const fsP = {
     copyFile: util.promisify(fs.copyFile),
     stat: util.promisify(fs.stat),
+    mkdir: util.promisify(fs.mkdir),
+    rename: util.promisify(fs.rename),
     unlink: util.promisify(fs.unlink),
     readFile: util.promisify(fs.readFile),
 }
+exports.fsP = fsP
 exports.dns_reverse = util.promisify(dns.reverse)
 
 exports.minutes_to_ms = (minutes) => minutes * 60 * 1000
@@ -151,4 +154,21 @@ exports.popen = (inText, cmd, params) => {
             if (code === 0) resolve(output); else reject(output);
         });
     });
+}
+
+exports.get_delete = (o, key) => {
+    const val = o[key]
+    delete o[key]
+    return val
+}
+
+exports.mkdir_if_needed = async (dir) => {
+    let stats
+    try {
+        stats = await fsP.stat(dir)
+    } catch (err) {
+        await fsP.mkdir(dir)
+        return
+    }
+    if (!stats.isDirectory()) throw `${dir} must be a directory`
 }
