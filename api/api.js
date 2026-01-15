@@ -173,7 +173,7 @@ exports.handle_trusted_upload = express_async(async (req, res) => {
     if (/^multipart[/]form-data/i.test(req.headers['content-type'])) {
         const uploadDir = conf.upload_dir + "/tmp"
         await helpers.mkdir_if_needed(uploadDir)
-        const { fields, files } = await helpers.form_parse(req, { uploadDir }, ['upload'])
+        const { fields, files } = await helpers.form_parse(req, { uploadDir, maxFileSize: 10 /*GiB*/* 1024*1024*1024 }, ['upload'])
         if (!files.upload) throw "invalid form trusted upload: expected file named 'upload'";
         if (!fields.owner) throw "missing 'owner' parameter"
 
