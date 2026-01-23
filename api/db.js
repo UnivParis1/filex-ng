@@ -5,11 +5,10 @@ const { UUID } = require('bson');
 
 let client_cache;
 
-const get_client_raw = () => {
-    return mongodb.MongoClient.connect(conf.mongodb.url, { useUnifiedTopology: true }).then(client => {
-        client_cache = client.db();
-        return client_cache;
-    })
+const get_client_raw = async () => {
+    const client = await mongodb.MongoClient.connect(conf.mongodb.url, { useUnifiedTopology: true })
+    client_cache = client.db();
+    return client_cache;
 };    
 const get_client = () => (
     client_cache
