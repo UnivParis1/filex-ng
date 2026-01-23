@@ -8,6 +8,10 @@ let client_cache;
 const get_client_raw = async () => {
     const client = await mongodb.MongoClient.connect(conf.mongodb.url, { useUnifiedTopology: true })
     client_cache = client.db();
+
+    await client_cache.collection('uploads').createIndex({ "uploader.eppn": 1 })
+    await client_cache.collection('downloads').createIndex({ doc: 1 })
+
     return client_cache;
 };    
 const get_client = () => (
