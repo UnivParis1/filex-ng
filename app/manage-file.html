@@ -1,5 +1,5 @@
  <div id="main" v-cloak>
-  <div v-if="!file">
+  <div v-if="!file || !info">
       Chargement en cours, veuillez patienter...
   </div>
   <div v-else style="margin-left: 1rem">
@@ -16,7 +16,7 @@
       <dt>Nombre de téléchargements</dt> <dd>{{file.downloads.length}}</dd>
       <dt>Adresse de téléchargement</dt> <dd><a :href="file.get_url">{{file.get_url}}</a></dd>
       <dt>Options</dt> <dd>
-        <File_options :file="file" @modified_options="modified_options = $event"></File_options>
+        <File_options :file="file" :info="info" @modified_options="modified_options = $event"></File_options>
         <button @click="save_file_options" v-if="modified_options.length">Enregister les modifications des options</button>
     </dd>
       </dl>

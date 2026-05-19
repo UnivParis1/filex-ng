@@ -34,7 +34,7 @@
                 {{nb}}
               </option>
         </select> Jours</p>
-        <File_options :file="upload"></File_options>
+        <File_options :file="upload" :info="info"></File_options>
 
         <div class="drop-zone" @drop.prevent="ondrop" @dragover.prevent="" @dragenter="dragging_over_drop_zone = true" @dragleave="dragging_over_drop_zone = false" :class="{ dragging_over_drop_zone: dragging_over_drop_zone }">
           <label class="for-input-file-upload">

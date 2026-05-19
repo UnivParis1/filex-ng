@@ -17,6 +17,19 @@ exports.user_info = express_async(async (req, res) => {
     res.json(await various.get_user_info(req.session.user))
 })
 
+async function check_user_allowed_options(options, user_info, { check_missing_options }) {
+    if ("daykeep" in options || check_missing_options) {
+        if (options.daykeep > user_info.max_daykeep) {
+            throw "invalid daykeep";
+        }
+    }
+    if ("require_auth" in options || check_missing_options) {
+        if (!options.require_auth && user_info.forced_require_auth) {
+            throw "require_auth mandatory for user"
+        }
+    }
+}
+
 const add_downloadCount = async (docs) => {
     const id2count = await db.files_download_count(docs.map(doc => doc._id))
     docs.forEach(doc => doc.downloadCount = id2count[doc._id] || 0)
@@ -42,6 +55,8 @@ exports.delete_user_file = express_async(async (req, res) => {
 })
 
 exports.modify_user_file = express_async(async (req, res) => {
+    const user_info = await various.get_user_info(req.session.user)
+    await check_user_allowed_options(req.query, user_info, { check_missing_options: false })
     const doc = await db.user_file(req.session.user, req.params.id)
     let subdoc = {}
     for (const attr of ['notify_on_download', 'notify_on_delete', 'hide_uploader', 'password', 'require_auth']) {
@@ -156,9 +171,7 @@ const _prepare_partial_upload = async (req) => {
 
 exports.handle_upload = express_async(async (req, res) => {
     const user_info = await various.get_user_info(req.session.user)
-    if (req.query.daykeep > user_info.max_daykeep) {
-        throw "invalid daykeep";
-    }
+    await check_user_allowed_options(req.query, user_info, { check_missing_options: true })
     const file_id = req.query.bytes_start ? await _prepare_partial_upload(req) : db.new_id()
     const size = await _body_to_file(req, file_id, true)
     if (size > user_info.remaining_quota) throw "quota dépassé, téléversement échoué"

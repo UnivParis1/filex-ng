@@ -180,10 +180,10 @@ const File_options = {
           <span class="notes">Le mot de passe doit avoir une longueur comprise entre <strong>4</strong> et <strong>30</strong> caract&egrave;res</span>
         </span>
     </p>
-    <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.require_auth">Exiger une authentification pour télécharger</label></p>
+    <p><label><input :disabled="file.deleted || info.forced_require_auth" type="checkbox" v-model="file.require_auth">Exiger une authentification pour télécharger</label></p>
     <p><label><input :disabled="file.deleted" type="checkbox" v-model="file.hide_uploader">Cacher mon email</label></p>
 `,
-    props: ['file'],
+    props: ['file', 'info'],
     emits: ['modified_options'],
     data() {
         return { file_orig: { ...this.file } }

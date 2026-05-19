@@ -10,6 +10,10 @@ let conf = {
         quota: helpers.un_formatBytes('6G'),
         max_daykeep: 45,
     },
+    computed_exemption: (user) => ({
+        // only allow users from our IDP to upload files that can be downloaded anonymously
+        forced_require_auth: !user.eppn.match(/@univ[.]fr$/),
+    }),
 
     mongodb: { 
         url: "mongodb://localhost/filex-ng",

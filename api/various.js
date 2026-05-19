@@ -21,10 +21,12 @@ const get_file = exports.get_file = (file_id) => conf.upload_dir + '/' + file_id
 exports.get_user_info = async (user) => {
     if (!user) throw "need relog"
     const exemption = await db.get_exemption(user.eppn) || {}
+    const computed_exemption = conf.computed_exemption?.(user)
     let info = {
         is_admin: exemption.admin,
-        quota: exemption.quota && helpers.un_formatBytes(exemption.quota) || conf.user_default.quota,
-        max_daykeep: exemption.max_daykeep || conf.user_default.max_daykeep,
+        quota: exemption.quota && helpers.un_formatBytes(exemption.quota) || computed_exemption?.quota || conf.user_default.quota,
+        max_daykeep: exemption.max_daykeep || computed_exemption?.max_daykeep || conf.user_default.max_daykeep,
+        forced_require_auth: computed_exemption?.forced_require_auth || conf.user_default.forced_require_auth,
         files_summary_by_deleted: _.merge({ 
             false: { total_size: 0, count: 0 },
             true: { total_size: 0, count: 0 },
